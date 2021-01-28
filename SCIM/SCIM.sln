@@ -3,17 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "In-Memory", "In-Memory\In-Memory.csproj", "{E630254D-C7B3-4E97-9089-CA59B11DEB89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "In-Memory", "Serviceprovider\In-Memory\In-Memory.csproj", "{E630254D-C7B3-4E97-9089-CA59B11DEB89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Extensions.csproj", "{280E55A2-DAA0-4E64-AEF3-9DA748538D2A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extensions", "Serviceprovider\Extensions\Extensions.csproj", "{280E55A2-DAA0-4E64-AEF3-9DA748538D2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityFramework", "EntityFramework\EntityFramework.csproj", "{4110437D-4764-47EB-A37A-55F9469D1D18}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EntityFramework", "Serviceprovider\EntityFramework\EntityFramework.csproj", "{4110437D-4764-47EB-A37A-55F9469D1D18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetIdentity", "AspNetIdentity\AspNetIdentity.csproj", "{F4E37839-F1D6-4935-89A8-1D3FCEEBA8E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetIdentity", "Serviceprovider\AspNetIdentity\AspNetIdentity.csproj", "{F4E37839-F1D6-4935-89A8-1D3FCEEBA8E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomStoreAndValidation", "CustomStoreAndValidation\CustomStoreAndValidation.csproj", "{26F580FF-F11B-466E-A377-308A3FD86F08}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomStoreAndValidation", "Serviceprovider\CustomStoreAndValidation\CustomStoreAndValidation.csproj", "{26F580FF-F11B-466E-A377-308A3FD86F08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationAndAuthorization", "AuthenticationAndAuthorization\AuthenticationAndAuthorization.csproj", "{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthenticationAndAuthorization", "Serviceprovider\AuthenticationAndAuthorization\AuthenticationAndAuthorization.csproj", "{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceProvider", "ServiceProvider", "{C143F57F-4857-4C83-9E40-B57EC9586BFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{71F37A6B-2E24-41C9-8B44-1C325BD998F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DefaultResources", "Client\DefaultResources\DefaultResources.csproj", "{DBCE7303-E0BE-4D7A-8962-42B2D6B03691}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +51,22 @@ Global
 		{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBCE7303-E0BE-4D7A-8962-42B2D6B03691}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCE7303-E0BE-4D7A-8962-42B2D6B03691}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCE7303-E0BE-4D7A-8962-42B2D6B03691}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCE7303-E0BE-4D7A-8962-42B2D6B03691}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E630254D-C7B3-4E97-9089-CA59B11DEB89} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{280E55A2-DAA0-4E64-AEF3-9DA748538D2A} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{4110437D-4764-47EB-A37A-55F9469D1D18} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{F4E37839-F1D6-4935-89A8-1D3FCEEBA8E7} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{26F580FF-F11B-466E-A377-308A3FD86F08} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{0EBD6A02-B0D9-45B6-9B61-9ADB5D2F9240} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
+		{DBCE7303-E0BE-4D7A-8962-42B2D6B03691} = {71F37A6B-2E24-41C9-8B44-1C325BD998F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {560A4393-685C-4067-8054-2FF27856D888}
