@@ -14,7 +14,6 @@ namespace DefaultResources.Models
         public ClientName Name { get; set; }
         public string DisplayName { get; set; }
         public string NickName { get; set; }
-        public string ScimId { get; set; }
     }
 
     public class ClientName

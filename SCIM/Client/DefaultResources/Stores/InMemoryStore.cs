@@ -41,6 +41,8 @@ namespace DefaultResources.Stores
 
             if (foundUser != null)
             {
+                user.IdToSpNameMap = foundUser.IdToSpNameMap;
+
                 users.Remove(foundUser);
                 users.Add(user);
             }

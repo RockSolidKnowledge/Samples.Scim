@@ -18,7 +18,7 @@ namespace DefaultResources.Services
     {
         Task Create(ClientUser user);
         Task Delete(string id);
-        Task<ClientUser> Read(string id);
+        Task<ClientUser> Read(string id, string serviceProviderName);
         Task Update(ClientUser user);
     }
 
@@ -90,16 +90,20 @@ namespace DefaultResources.Services
             }
         }
 
-        public async Task<ClientUser> Read(string id)
+        public async Task<ClientUser> Read(string id, string serviceProviderName)
         {
             var foundUser = store.Get(id);
 
             if (foundUser == null) return null;
 
+            var idForSp = foundUser.IdToSpNameMap.FirstOrDefault(d => d.Key == serviceProviderName);
+
+            if (string.IsNullOrWhiteSpace(idForSp.Value)) return null;
+
             var resource = new ServiceProviderResource
             {
-                Id = foundUser.ScimId,
-                ServiceProviderName = "ServiceProviderName"
+                Id = idForSp.Value,
+                ServiceProviderName = serviceProviderName
             };
 
             var scimResult = await scimClient.Read(resource, CancellationToken.None);
@@ -111,7 +115,17 @@ namespace DefaultResources.Services
 
         public async Task Update(ClientUser user)
         {
-            var scimResult = await scimClient.Update(user, default);
+            var foundUser = store.Get(user.Id);
+
+            if (foundUser == null) return;
+
+            var serviceProviders = foundUser.IdToSpNameMap.Select(map => new ServiceProviderResource
+            {
+                Id = map.Value,
+                ServiceProviderName = map.Key
+            });
+
+            var scimResult = await scimClient.Update(user, serviceProviders, default);
 
             if (scimResult.IsSuccess)
             {

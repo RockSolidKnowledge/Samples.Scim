@@ -17,7 +17,7 @@ namespace DefaultResources.Mappers
                 {
                     GivenName = resource.Name.FirstName
                 },
-                Id = resource.ScimId
+                Id = resource.Id
             };
         }
 
@@ -32,7 +32,7 @@ namespace DefaultResources.Mappers
                 {
                     FirstName = scimResource.Name.GivenName
                 },
-                ScimId = scimResource.Id
+                Id = scimResource.Id
             };
         }
     }

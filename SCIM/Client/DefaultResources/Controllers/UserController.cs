@@ -26,7 +26,7 @@ namespace DefaultResources.Controllers
         [HttpGet("{id}")]
         public async Task<ClientUser> GetUser([FromRoute]string id)
         {
-            return await userService.Read(id);
+            return await userService.Read(id, "ServiceProviderName");
         }
 
         [HttpPut]
@@ -35,7 +35,7 @@ namespace DefaultResources.Controllers
             await userService.Update(clientUser);
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task DeleteUser([FromRoute] string id)
         {
             await userService.Delete(id);
