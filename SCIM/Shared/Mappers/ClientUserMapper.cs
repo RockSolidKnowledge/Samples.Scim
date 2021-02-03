@@ -1,8 +1,8 @@
-﻿using DefaultResources.Models;
-using Rsk.AspNetCore.Scim.Interfaces;
+﻿using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
+using Shared.Models;
 
-namespace DefaultResources.Mappers
+namespace Shared.Mappers
 {
     public class ClientUserMapper : IResourceMapper<ClientUser, User>
     {

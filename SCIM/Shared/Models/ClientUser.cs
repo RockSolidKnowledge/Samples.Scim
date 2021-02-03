@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DefaultResources.Models
+namespace Shared.Models
 {
     public class ClientResource
     {

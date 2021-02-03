@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using DefaultResources.Models;
-using DefaultResources.Stores;
 using Microsoft.Extensions.Logging;
 using Rsk.AspNetCore.Scim.Clients;
 using Rsk.AspNetCore.Scim.Clients.Models;
 using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
 using Rsk.AspNetCore.Scim.Results;
+using Shared.Models;
+using Shared.Stores;
 
-namespace DefaultResources.Services
+namespace Shared.Services
 {
     public interface IUserService
     {

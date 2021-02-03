@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DefaultResources.Models;
+using Shared.Models;
 
-namespace DefaultResources.Stores
+namespace Shared.Stores
 {
     public interface IStore
     {
