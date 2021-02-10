@@ -19,6 +19,11 @@ namespace Caching.Caching
     public class CustomCache : IScimCache
     {
         private List<CacheEntry> entries;
+        
+        public CustomCache()
+        {
+            entries = new List<CacheEntry>();
+        }
 
         public IScimCacheEntry CreateEntry(string key)
         {
@@ -40,7 +45,7 @@ namespace Caching.Caching
         {
             var foundEntry = entries.FirstOrDefault(e => e.Key as string == key);
 
-            value = foundEntry;
+            value = foundEntry?.Value;
 
             return foundEntry != null;
         }

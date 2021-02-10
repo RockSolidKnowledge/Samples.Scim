@@ -47,28 +47,28 @@ namespace Authentication
             services.AddControllers();
         }
 
-        private void ConfigureForBasicAuth(IScimClientBuilder builder)
+        private void ConfigureForBasicAuth(ScimClientBuilder builder)
         {
             ScimBasicAuthOptions basicAuthOptions = new ScimBasicAuthOptions("UserName", "Password!321");
 
             builder.AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", basicAuthOptions);
         }
 
-        private void ConfigureForOAuth(IScimClientBuilder builder)
+        private void ConfigureForOAuth(ScimClientBuilder builder)
         { 
-            ScimOAuthOptions oAuthOptions = new ScimOAuthOptions("scimclient", "https://ids.local:5003/connect/token", "scimclient", "scim");
+            ScimOAuthOptions oAuthOptions = new ScimOAuthOptions("scimclient", "https://localhost:5003/connect/token", "scimclient", "scim");
 
             builder.AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", oAuthOptions);
         }
 
-        private void ConfigureForApiKey(IScimClientBuilder builder)
+        private void ConfigureForApiKey(ScimClientBuilder builder)
         {
             ScimApiKeyOptions apiKeyOptions = new ScimApiKeyOptions("x-scim-api-key", "Password!321");
 
             builder.AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", apiKeyOptions);
         }
 
-        private void ConfigureForCustomAuth(IScimClientBuilder builder)
+        private void ConfigureForCustomAuth(ScimClientBuilder builder)
         {
             builder.AddScimServiceProvider<Authenticator.Authenticator>("ServiceProviderName", options =>
             {

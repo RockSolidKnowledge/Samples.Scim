@@ -1,6 +1,9 @@
 ﻿using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
 using Shared.Models;
+using System.Collections.Generic;
+using System.Linq;
+using Rsk.AspNetCore.Scim.Constants;
 
 namespace Shared.Mappers
 {
@@ -13,16 +16,28 @@ namespace Shared.Mappers
                 UserName = resource.UserName,
                 DisplayName = resource.DisplayName,
                 NickName = resource.NickName,
-                Name = new Rsk.AspNetCore.Scim.Models.Name
+                Name = new Name
                 {
                     GivenName = resource.Name.FirstName
                 },
-                Id = resource.Id
+                Id = resource.Id,
+                Extensions = new Dictionary<string, object>
+                {
+                    [ScimSchemas.EnterpriseUserSchema] = new EnterpriseUser
+                    {
+                        Organization = resource.Organization,
+                        Department = resource.Department
+                    }
+                }
             };
         }
 
         public ClientUser FromScimResource(User scimResource)
         {
+            var enterpriseUser =
+                scimResource?.Extensions.First(e => e.Key == ScimSchemas.EnterpriseUserSchema)
+                    .Value as EnterpriseUser;
+             
             return new ClientUser
             {
                 UserName = scimResource.UserName,
@@ -32,7 +47,9 @@ namespace Shared.Mappers
                 {
                     FirstName = scimResource.Name.GivenName
                 },
-                Id = scimResource.Id
+                Id = scimResource.Id,
+                Organization = enterpriseUser.Organization,
+                Department = enterpriseUser.Department
             };
         }
     }

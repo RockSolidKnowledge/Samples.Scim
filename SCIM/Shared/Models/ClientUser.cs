@@ -14,6 +14,8 @@ namespace Shared.Models
         public ClientName Name { get; set; }
         public string DisplayName { get; set; }
         public string NickName { get; set; }
+        public string Department { get; set; }
+        public string Organization { get; set; }
     }
 
     public class ClientName

@@ -1,12 +1,10 @@
-﻿using System;
-using Caching.Caching;
+﻿using Caching.Caching;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rsk.AspNetCore.Scim.Authenticators;
-using Rsk.AspNetCore.Scim.Configuration.DependencyInjection;
 using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
 using Shared.Mappers;
@@ -35,8 +33,11 @@ namespace Caching
 
             services.AddSingleton<IStore, InMemoryStore>();
 
+            ScimOAuthOptions oAuthOptions = new ScimOAuthOptions("scimclient", "https://localhost:5003/connect/token", "scimclient", "scim");
+
             services.AddScimClient()
                 .AddUser<ClientUser, ClientUserMapper>()
+                .AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", oAuthOptions)
                 .AddCache<CustomCache>();
 
             services.AddControllers();
