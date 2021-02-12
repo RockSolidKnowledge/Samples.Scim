@@ -4,47 +4,54 @@ using Shared.Models;
 
 namespace Shared.Stores
 {
-    public interface IStore
+    public interface IStore<T> where T : ClientResource
     {
-        ClientUser Get(string id);
-        void Delete(ClientUser user);
-        void Create(ClientUser user);
-        void Update(ClientUser user);
+        T Get(string id);
+        IEnumerable<T> GetAll();
+        void Delete(T resource);
+        void Create(T resource);
+        void Update(T resource);
     }
 
-    public class InMemoryStore : IStore
+    public class InMemoryStore<TClientResource> : IStore<TClientResource>
+        where TClientResource : ClientResource
     {
-        List<ClientUser> users = new List<ClientUser>();
+        readonly List<TClientResource> resources = new List<TClientResource>();
 
-        public ClientUser Get(string id)
+        public TClientResource Get(string id)
         {
-            return users.FirstOrDefault(u => u.Id == id);
+            return resources.FirstOrDefault(u => u.Id == id);
         }
 
-        public void Delete(ClientUser user)
+        public IEnumerable<TClientResource> GetAll()
         {
-            var foundUser = Get(user.Id);
-
-            if (foundUser != null) users.Remove(foundUser);
+            return resources.ToArray();
         }
 
-        public void Create(ClientUser user)
+        public void Delete(TClientResource resource)
         {
-            var foundUser = Get(user.Id);
+            var foundResource = Get(resource.Id);
 
-            if (foundUser == null) users.Add(user);
+            if (foundResource != null) resources.Remove(foundResource);
         }
 
-        public void Update(ClientUser user)
+        public void Create(TClientResource resource)
         {
-            var foundUser = Get(user.Id);
+            var foundResource = Get(resource.Id);
 
-            if (foundUser != null)
+            if (foundResource == null) resources.Add(resource);
+        }
+
+        public void Update(TClientResource resource)
+        {
+            var foundResource = Get(resource.Id);
+
+            if (foundResource != null)
             {
-                user.IdToSpNameMap = foundUser.IdToSpNameMap;
+                resource.SpNameToId = foundResource.SpNameToId;
 
-                users.Remove(foundUser);
-                users.Add(user);
+                resources.Remove(foundResource);
+                resources.Add(resource);
             }
         }
     }

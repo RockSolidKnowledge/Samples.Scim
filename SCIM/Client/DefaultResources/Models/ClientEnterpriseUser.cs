@@ -1,4 +1,4 @@
-﻿namespace Shared.Models
+﻿namespace DefaultResources.Models
 {
     public class ClientEnterpriseUser
     {

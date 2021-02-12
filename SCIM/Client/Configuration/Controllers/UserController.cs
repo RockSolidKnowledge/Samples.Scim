@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Rsk.AspNetCore.Scim.Models;
 using Shared.Models;
 using Shared.Services;
 
-namespace Authentication.Controllers
+namespace Configuration.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService userService;
+        private readonly IClientService<ClientUser, User> userService;
 
-        public UserController(IUserService userService)
+        public UserController(IClientService<ClientUser, User> userService)
         {
             this.userService = userService ?? throw new ArgumentNullException(nameof(userService));
         }

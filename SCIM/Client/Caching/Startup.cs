@@ -26,12 +26,12 @@ namespace Caching
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IClientService<ClientUser, User>, ClientService<ClientUser, User>>();
             services.AddScoped<IResourceMapper<ClientUser, User>, ClientUserMapper>();
 
             services.AddLogging();
 
-            services.AddSingleton<IStore, InMemoryStore>();
+            services.AddSingleton<IStore<ClientUser>, InMemoryStore<ClientUser>>();
 
             ScimOAuthOptions oAuthOptions = new ScimOAuthOptions("scimclient", "https://localhost:5003/connect/token", "scimclient", "scim");
 

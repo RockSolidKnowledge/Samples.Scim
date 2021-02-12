@@ -4,12 +4,13 @@ namespace Shared.Models
 {
     public class ClientResource
     {
-        public Dictionary<string, string> IdToSpNameMap = new Dictionary<string, string>();
+        public string Id { get; set; }
+
+        public Dictionary<string, string> SpNameToId = new Dictionary<string, string>();
     }
 
     public class ClientUser : ClientResource
     {
-        public string Id { get; set; }
         public string UserName { get; set; }
         public ClientName Name { get; set; }
         public string DisplayName { get; set; }

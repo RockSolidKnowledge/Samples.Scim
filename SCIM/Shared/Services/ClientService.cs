@@ -14,23 +14,27 @@ using Shared.Stores;
 
 namespace Shared.Services
 {
-    public interface IUserService
+    public interface IClientService<TClientResource, TScimResource>
+        where TClientResource : ClientResource
+        where TScimResource : Resource
     {
-        Task Create(ClientUser user);
+        Task Create(TClientResource user);
         Task Delete(string id);
-        Task<ClientUser> Read(string id, string serviceProviderName);
-        Task Update(ClientUser user);
+        Task<TClientResource> Read(string id, string serviceProviderName);
+        Task Update(TClientResource user);
     }
 
-    public class UserService : IUserService
+    public class ClientService<TClientResource, TScimResource> : IClientService<TClientResource, TScimResource>
+        where TClientResource : ClientResource
+        where TScimResource : Resource
     {
-        private IScimClient<ClientUser, User> scimClient;
-        private readonly IResourceMapper<ClientUser, User> mapper;
-        private readonly IStore store;
-        private readonly ILogger<UserService> logger;
+        private IScimClient<TClientResource, TScimResource> scimClient;
+        private readonly IResourceMapper<TClientResource, TScimResource> mapper;
+        private readonly IStore<TClientResource> store;
+        private readonly ILogger<ClientService<TClientResource, TScimResource>> logger;
 
-        public UserService(IScimClient<ClientUser, User> scimClient, IResourceMapper<ClientUser, User> mapper,
-            IStore store, ILogger<UserService> logger)
+        public ClientService(IScimClient<TClientResource, TScimResource> scimClient, IResourceMapper<TClientResource, TScimResource> mapper,
+            IStore<TClientResource> store, ILogger<ClientService<TClientResource, TScimResource>> logger)
         {
             this.scimClient = scimClient ?? throw new ArgumentNullException(nameof(scimClient));
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -38,17 +42,17 @@ namespace Shared.Services
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Create(ClientUser user)
+        public async Task Create(TClientResource resource)
         {
-            var scimResult = await scimClient.Create(user, default);
+            var scimResult = await scimClient.Create(resource, default);
 
             if (scimResult.IsSuccess)
             {
                 var serviceProviderResults = scimResult.InnerResults.ToDictionary(ir => ir.ServiceProviderName, ir => ir.ResourceId);
 
-                user.IdToSpNameMap = serviceProviderResults;
+                resource.SpNameToId = serviceProviderResults;
 
-                store.Create(user);
+                store.Create(resource);
             }
             else
             {
@@ -58,15 +62,15 @@ namespace Shared.Services
             }
         }
 
-        public async Task Delete(string id)
+        public async Task Delete(string id) 
         {
-            var foundUser = store.Get(id);
+            var foundResource = store.Get(id);
 
-            if (foundUser == null) return;
+            if (foundResource == null) return;
 
             var tasks = new List<Task<IScimClientResult>>();
 
-            foreach (var serviceProviderResource in foundUser.IdToSpNameMap)
+            foreach (var serviceProviderResource in foundResource.SpNameToId)
             {
                 var resource = new ServiceProviderResource
                 {
@@ -90,13 +94,13 @@ namespace Shared.Services
             }
         }
 
-        public async Task<ClientUser> Read(string id, string serviceProviderName)
+        public async Task<TClientResource> Read(string id, string serviceProviderName)
         {
-            var foundUser = store.Get(id);
+            var foundResource = store.Get(id);
 
-            if (foundUser == null) return null;
+            if (foundResource == null) return null;
 
-            var idForSp = foundUser.IdToSpNameMap.FirstOrDefault(d => d.Key == serviceProviderName);
+            var idForSp = foundResource.SpNameToId.FirstOrDefault(d => d.Key == serviceProviderName);
 
             if (string.IsNullOrWhiteSpace(idForSp.Value)) return null;
 
@@ -113,23 +117,23 @@ namespace Shared.Services
             return null;
         }
 
-        public async Task Update(ClientUser user)
+        public async Task Update(TClientResource resource)
         {
-            var foundUser = store.Get(user.Id);
+            var foundResource = store.Get(resource.Id);
 
-            if (foundUser == null) return;
+            if (foundResource == null) return;
 
-            var serviceProviders = foundUser.IdToSpNameMap.Select(map => new ServiceProviderResource
+            var serviceProviders = foundResource.SpNameToId.Select(map => new ServiceProviderResource
             {
                 Id = map.Value,
                 ServiceProviderName = map.Key
             });
 
-            var scimResult = await scimClient.Update(user, serviceProviders, default);
+            var scimResult = await scimClient.Update(resource, serviceProviders, default);
 
             if (scimResult.IsSuccess)
             {
-                store.Update(user);
+                store.Update(resource);
             }
             else
             {
