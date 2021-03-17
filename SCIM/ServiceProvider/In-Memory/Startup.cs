@@ -16,7 +16,7 @@ namespace In_Memory
                 LicenseKey = "..."
             };
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddScimDefaultResourcesForInMemoryStore()
                 .AddResource<Organization>("urn:ietf:params:scim:schemas:RSK:2.0:Organization", "Organizations");
         }

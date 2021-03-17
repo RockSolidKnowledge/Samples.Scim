@@ -17,7 +17,7 @@ namespace Extensions
                 LicenseKey = "..."
             };
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddScimDefaultResourcesForInMemoryStore()
                 .AddResource<Organization>("urn:ietf:params:scim:schemas:RSK:2.0:Organization", "Organizations")
                 .AddResourceExtension<Organization, CharityOrganization>("urn:ietf:params:scim:schemas:RSK:extension:charity:2.0:Organization");

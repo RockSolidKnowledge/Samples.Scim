@@ -26,7 +26,7 @@ namespace AuthenticationAndAuthorization
                 });
             });
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddScimDefaultResourcesForInMemoryStore()
                 .UseAuthentication(CookieAuthenticationDefaults.AuthenticationScheme, "SalesOnly");
         }

@@ -30,7 +30,7 @@ namespace EntityFramework
 
             var connectionString = configuration.GetConnectionString("ExtendedScim");
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddScimDefaultResourcesForEntityFrameworkStore()
                 .AddResourceForDefaultEfStore<Organization, OrganizationEntity, OrganizationMapper>(
                     "urn:ietf:params:scim:schemas:RSK:2.0:Organization", "Organizations")

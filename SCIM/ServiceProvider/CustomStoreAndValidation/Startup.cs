@@ -29,7 +29,7 @@ namespace CustomStoreAndValidation
 
             var connectionString = configuration.GetConnectionString("ExtendedScim");
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddResource<User, ScimStore, ScimValidator>("urn:ietf:params:scim:schemas:core:2.0:User", "Users")
                 .AddScimDbContext(options => options.UseSqlServer(connectionString));
         }

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rsk.AspNetCore.Scim.Configuration;
@@ -41,7 +40,7 @@ namespace AspNetIdentity
                 .AddUserStore<UserStore<MyIdentityUser, IdentityRole, MyIdentityContext>>()
                 .AddEntityFrameworkStores<MyIdentityContext>();
 
-            services.AddScim("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddUserResourceWithDefaultIdentityEfStore<MyIdentityUser, MyIdentityMapper>("Users");
         }
 
