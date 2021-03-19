@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rsk.AspNetCore.Scim.Authenticators;
+using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Configuration.DependencyInjection;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Interfaces;
@@ -35,7 +36,11 @@ namespace Authentication
 
             services.AddSingleton<IStore<ClientUser>, InMemoryStore<ClientUser>>();
 
-            var builder = services.AddScimClient()
+            var builder = services.AddScimClient(new ScimClientConfiguration 
+                {
+                    Licensee = "Demo", 
+                    LicenseKey = "..."
+                })
                 .AddUser<ClientUser, ClientUserMapper>();
 
             ConfigureForApiKey(builder);

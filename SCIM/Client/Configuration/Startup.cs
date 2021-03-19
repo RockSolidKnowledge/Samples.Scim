@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
@@ -35,7 +36,11 @@ namespace Configuration
 
             services.AddSingleton<IStore<ClientUser>, InMemoryStore<ClientUser>>();
 
-            services.AddScimClient()
+            services.AddScimClient(new ScimClientConfiguration
+                {
+                    Licensee = "Demo",
+                    LicenseKey = "..."
+                })
                 .AddUser<ClientUser, ClientUserMapper>()
                 .AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/")
                 .ConfigurePrimaryHttpMessageHandler("ServiceProviderName", () => new HttpClientHandler
