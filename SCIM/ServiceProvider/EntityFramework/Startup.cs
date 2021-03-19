@@ -36,7 +36,8 @@ namespace EntityFramework
                     "urn:ietf:params:scim:schemas:RSK:2.0:Organization", "Organizations")
                 .AddResourceExtension<Organization, CharityOrganization>(
                     "urn:ietf:params:scim:schemas:RSK:extension:charity:2.0:Organization")
-                .AddScimDbContext<ExtendedScimDbContext>(options => options.UseSqlServer(connectionString));
+                .AddScimDbContext<ExtendedScimDbContext>(options => options.UseInMemoryDatabase(connectionString));
+                //.AddScimDbContext<ExtendedScimDbContext>(options => options.UseSqlServer(connectionString));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
