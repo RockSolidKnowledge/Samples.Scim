@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
+using idunno.Authentication.Basic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Rsk.AspNetCore.Scim.Configuration;
@@ -15,8 +17,7 @@ namespace AuthenticationAndAuthorization
                 LicenseKey = "..."
             };
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie();
+            AddBasicAuth(services);
 
             services.AddAuthorization(options =>
             {
@@ -28,7 +29,7 @@ namespace AuthenticationAndAuthorization
 
             services.AddScimServiceProvider("/SCIM", licensingOptions)
                 .AddScimDefaultResourcesForInMemoryStore()
-                .UseAuthentication(CookieAuthenticationDefaults.AuthenticationScheme, "SalesOnly");
+                .UseAuthentication(BasicAuthenticationDefaults.AuthenticationScheme);
         }
 
         public void Configure(IApplicationBuilder app)
@@ -37,6 +38,32 @@ namespace AuthenticationAndAuthorization
             app.UseAuthorization();
 
             app.UseScim();
+        }
+
+        private static void AddBasicAuth(IServiceCollection services)
+        {
+            services.AddAuthentication(BasicAuthenticationDefaults.AuthenticationScheme)
+                .AddBasic(options =>
+                {
+                    options.Events = new BasicAuthenticationEvents
+                    {
+                        OnValidateCredentials = context =>
+                        {
+                            if (context.Username == "UserName" &&
+                                context.Password == "Password!321")
+                            {
+                                context.Principal = new ClaimsPrincipal();
+                                context.Success();
+                            }
+                            else
+                            {
+                                context.Fail("Invalid credentials");
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
         }
     }
 }

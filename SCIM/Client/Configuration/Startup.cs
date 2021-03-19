@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rsk.AspNetCore.Scim.Configuration;
-using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Interfaces;
 using Rsk.AspNetCore.Scim.Models;
 using Shared.Mappers;

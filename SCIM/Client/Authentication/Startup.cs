@@ -38,12 +38,13 @@ namespace Authentication
 
             var builder = services.AddScimClient(new ScimClientConfiguration 
                 {
-                    Licensee = "Demo", 
+                    Licensee = "Demo",
                     LicenseKey = "..."
                 })
-                .AddUser<ClientUser, ClientUserMapper>();
+                .AddUser<ClientUser, ClientUserMapper>()
+                .AddEnterpriseUser();
 
-            ConfigureForApiKey(builder);
+            ConfigureForBasicAuth(builder);
             //ConfigureForOAuth(builder);
             //ConfigureForBasicAuth(builder);
 
@@ -56,7 +57,7 @@ namespace Authentication
         {
             ScimBasicAuthOptions basicAuthOptions = new ScimBasicAuthOptions("UserName", "Password!321");
 
-            builder.AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", basicAuthOptions);
+            builder.AddServiceProvider("ServiceProviderName", "http://localhost:5000/SCIM/", basicAuthOptions);
         }
 
         private void ConfigureForOAuth(ScimClientBuilder builder)
