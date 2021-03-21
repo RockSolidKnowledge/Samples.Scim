@@ -32,7 +32,9 @@ namespace AspNetIdentity
             var connectionString = configuration.GetConnectionString("Identity");
 
             services.AddDbContext<MyIdentityContext>(options =>
-                options.UseInMemoryDatabase(connectionString));
+                options.UseSqlServer(connectionString,
+                    optionsBuilder =>
+                        optionsBuilder.MigrationsAssembly(typeof(Startup).Assembly.GetName().Name)));
 
             services.AddIdentityCore<MyIdentityUser>()
                 .AddUserStore<UserStore<MyIdentityUser, IdentityRole, MyIdentityContext>>()
