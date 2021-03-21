@@ -40,6 +40,7 @@ namespace Configuration
                     LicenseKey = "..."
                 })
                 .AddUser<ClientUser, ClientUserMapper>()
+                .AddEnterpriseUser()
                 .AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/")
                 .ConfigurePrimaryHttpMessageHandler("ServiceProviderName", () => new HttpClientHandler
                 {

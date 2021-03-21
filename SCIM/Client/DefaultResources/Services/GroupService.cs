@@ -231,13 +231,13 @@ namespace DefaultResources.Services
         {
             return new Dictionary<string, string>
             {
-                ["ServiceProviderName"] = "http://localhost:5000/SCIM/"
+                ["ServiceProviderName"] = "https://localhost:5000/SCIM/"
             };
         }
 
         public string GetServiceProviderUri(string name)
         {
-            if (name == "ServiceProviderName") return "http://localhost:5000/SCIM/";
+            if (name == "ServiceProviderName") return "https://localhost:5000/SCIM/";
 
             return "";
         }

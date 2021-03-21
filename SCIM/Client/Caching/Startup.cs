@@ -42,6 +42,7 @@ namespace Caching
                     LicenseKey = "..."
                 })
                 .AddUser<ClientUser, ClientUserMapper>()
+                .AddEnterpriseUser()
                 .AddServiceProvider("ServiceProviderName", "https://localhost:5000/SCIM/", oAuthOptions)
                 .AddCache<CustomCache>();
 
