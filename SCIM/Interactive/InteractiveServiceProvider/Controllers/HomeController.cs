@@ -3,15 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Rsk.AspNetCore.Scim.Models;
 
 namespace InteractiveServiceProvider.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly CustomScimStore scimStore;
+        private readonly CustomScimStore<User> scimStore;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(CustomScimStore scimStore, ILogger<HomeController> logger)
+        public HomeController(CustomScimStore<User> scimStore, ILogger<HomeController> logger)
         {
             this.scimStore = scimStore ?? throw new ArgumentNullException(nameof(scimStore));
             _logger = logger;

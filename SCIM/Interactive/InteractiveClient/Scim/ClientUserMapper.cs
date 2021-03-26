@@ -10,6 +10,7 @@ namespace InteractiveClient
         {
             return new User
             {
+                Id = resource.EmployeeId,
                 ExternalId = resource.EmployeeId,
                 Name = new Name
                 {

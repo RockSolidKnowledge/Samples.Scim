@@ -1,57 +1,33 @@
-﻿using Rsk.AspNetCore.Scim.Models;
-using Rsk.AspNetCore.Scim.Results;
+﻿using Microsoft.AspNetCore.Authentication;
+using Rsk.AspNetCore.Scim.Factories;
+using Rsk.AspNetCore.Scim.Models;
 using Rsk.AspNetCore.Scim.Stores;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace InteractiveServiceProvider.Stores
 {
-    public class CustomScimStore : IScimStore<User>
+    public class CustomScimStore<T> : InMemoryScimStore<T> where T : Resource
     {
-        private readonly IList<User> users;
+        private readonly ICollection<T> resources;
 
-        public CustomScimStore()
+        public CustomScimStore(
+            ICollection<T> resources,
+            ISystemClock systemClock,
+            IExpressionFactory expressionFactory,
+            IStoreScimExtensions extensionStore) : base(resources, systemClock, expressionFactory, extensionStore)
         {
-            users = new List<User>();
+            this.resources = resources;
         }
 
-        public async Task<IScimResult<User>> Add(User resource, IEnumerable<ScimExtensionValue> scimExtensions, string resourceSchema)
+        public Task<IList<T>> GetAll()
         {
-            resource.Id = Guid.NewGuid().ToString();
-            users.Add(resource);
-
-            return ScimResult<User>.Success(resource);
-        }
-
-        public Task<IList<User>> GetAll()
-        {
-            return Task.FromResult(users);
-        }
-
-        public Task<IEnumerable<(bool Exists, string Id)>> Exists(IEnumerable<string> ids)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IScimResult> Delete(string id, string resourceSchema)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IScimResult<User>> Update(User resource, IEnumerable<ScimExtensionValue> scimExtensions, string resourceSchema)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IScimResult<IEnumerable<ScimExtensionValue>>> GetExtensionsForResource(string resourceId, string resourceSchema)
-        {
-            throw new NotImplementedException();
+            lock (resources)
+            {
+                var allResources = resources.ToList();
+                return Task.FromResult<IList<T>>(allResources);
+            }
         }
     }
 }
