@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0" />
+    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0-preview2" />
   </ItemGroup>
 
   <ItemGroup>
