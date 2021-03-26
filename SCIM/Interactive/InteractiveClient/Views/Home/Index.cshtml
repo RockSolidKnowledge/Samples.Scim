@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Users";
+    @model IList<InteractiveClient.Models.ClientUser>
+}
+
+<h1 class="display-4">Users</h1>
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>Employee ID</th>
+        <th>UserName</th>
+        <th>Name</th>
+    </tr>
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>@d.EmployeeId</td>
+            <td>@d.UserName</td>
+            <td>@d.Name</td>
+        </tr>
+    }
+</table>

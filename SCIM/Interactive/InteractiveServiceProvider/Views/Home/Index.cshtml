@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Users";
+@model IList<Rsk.AspNetCore.Scim.Models.User>
+}
+
+<h1 class="display-4">Users</h1>
+<table class="table table-bordered table-responsive table-hover">
+    <tr>
+        <th>External ID</th>
+        <th>UserName</th>
+        <th>GivenName</th>
+        <th>SCIM Resource ID</th>
+    </tr>
+    @foreach (var d in Model)
+    {
+        <tr>
+            <td>@d.ExternalId</td>
+            <td>@d.UserName</td>
+            <td>@d.Name.GivenName</td>
+            <td>@d.Id</td>
+        </tr>
+    }
+</table>
