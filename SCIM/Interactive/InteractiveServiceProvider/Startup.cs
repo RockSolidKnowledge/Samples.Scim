@@ -26,8 +26,8 @@ namespace InteractiveServiceProvider
             // Our ScimStore doesn't support `GetAll` method. This custom implementation is only used for this purpose here.
             // Otherwise, you shouldn't need to add a custom in-memory implementation.
             services.AddSingleton<ICollection<User>>(new List<User>());
-            services.AddSingleton<CustomScimStore<User>>();
-            services.AddSingleton<IScimStore<User>>(s => s.GetService<CustomScimStore<User>>());
+            services.AddSingleton<MyInMemoryScimStore<User>>();
+            services.AddSingleton<IScimStore<User>>(s => s.GetService<MyInMemoryScimStore<User>>());
         }
 
         public void Configure(IApplicationBuilder app)

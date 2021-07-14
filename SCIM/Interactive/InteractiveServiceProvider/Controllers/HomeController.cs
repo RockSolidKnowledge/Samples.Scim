@@ -9,13 +9,11 @@ namespace InteractiveServiceProvider.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly CustomScimStore<User> scimStore;
-        private readonly ILogger<HomeController> _logger;
+        private readonly MyInMemoryScimStore<User> scimStore;
 
-        public HomeController(CustomScimStore<User> scimStore, ILogger<HomeController> logger)
+        public HomeController(MyInMemoryScimStore<User> scimStore)
         {
             this.scimStore = scimStore ?? throw new ArgumentNullException(nameof(scimStore));
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
