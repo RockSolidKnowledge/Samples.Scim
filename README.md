@@ -12,13 +12,12 @@ The sample projects implement the QuickStarts from [https://www.identityserver.c
 
 Please note that the Service Provider implementations build upon one another based on the QuickStarts.
 
-- 
 - **ServiceProvider**
 	- **In-Memory:** A basic implementation of a SCIM Service Provider using the in-memory store, note no patch or filter support, and not compatible with AzureAD and Okta.
 	- **Extensions:** A SCIM Service Provider implementation utilizing the extensions feature of SCIM
 	- **AuthenticationAndAuthorization:** A SCIM Service Provider implementation with the SCIM endpoints protected with authentication and authorization
 	- **CustomStoreAndValidation:** A SCIM Service Provider implementation with custom stores and validation for SCIM requests
-	- **SimpleApp** A SCIM Service Provider implementation with custom stores that fully support filters and patch. This is compatible with AzureAD and Okta
+- **SimpleApp** A SCIM Service Provider implementation with custom stores that fully support filters and patch. This is compatible with AzureAD and Okta
 
 ## Getting Started
 
