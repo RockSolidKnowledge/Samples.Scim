@@ -1,0 +1,50 @@
+﻿@model AccountsModel
+@{
+    ViewData["Title"] = "Accounts Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>All the accounts</p>
+</div>
+
+<h1> Users </h1>
+<table>
+    <tr>
+
+        <th>Id</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Culture</th>
+        <th>Is Active</th>
+    </tr>
+
+    @foreach (var row in Model?.AllUsers ?? Enumerable.Empty<AppUserModel>())
+    {
+        <tr>
+            <td>@row.Id</td>
+            <td>@row.Username</td>
+            <td>@row.Name</td>
+            <td>@row.Culture</td>
+            <td>@row.IsActive</td>
+        </tr>
+    }
+
+</table>
+
+
+<h1>Roles</h1>
+
+<ul>
+@foreach (var row in Model?.AllRoles ?? Enumerable.Empty<AppRoleModel>())
+    {
+        <li>@row.Name @row.Id</li>
+
+        <ul>
+        @foreach (var member in row.Users)
+        {
+        <li>@member.Id @member.Name</li>
+        }
+        </ul>
+    }
+</ul>

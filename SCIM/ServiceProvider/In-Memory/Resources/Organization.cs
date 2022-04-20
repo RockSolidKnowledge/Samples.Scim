@@ -5,8 +5,12 @@ namespace In_Memory.Resources
 {
     public class Organization : Resource
     {
+        public Organization():base("Organization")
+        {
+            
+        }
         [Required(Required.Create, Required.Update)]
-        [Unique]
+        [Unique(Uniqueness.Server)]
         public string Name { get; set; }
         public int EmployeeCount { get; set; }
         public string CEO { get; set; }
