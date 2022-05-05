@@ -4,8 +4,6 @@ The Rock Solid Knowledge SCIM component for ASP.NET Core enables your web applic
 
 The SCIM component is available from [https://www.identityserver.com/products/scim-for-aspnet](https://www.identityserver.com/products/scim-for-aspnet).
 
-To see the SCIM Client and Service Provider working together, you can run the InteractiveClient and InteractiveServiceProvider together. The InteractiveClient has the functionality to add a new user; you can also see the list of all users in client and service provider.
-
 ## Projects
 
 The sample projects implement the QuickStarts from [https://www.identityserver.com/documentation/scim/](https://www.identityserver.com/documentation/scim/). For more information about each project, please refer to the QuickStart documentation.
@@ -18,6 +16,7 @@ Please note that the Service Provider implementations build upon one another bas
 	- **AuthenticationAndAuthorization:** A SCIM Service Provider implementation with the SCIM endpoints protected with authentication and authorization
 	- **CustomStoreAndValidation:** A SCIM Service Provider implementation with custom stores and validation for SCIM requests
 - **SimpleApp** A SCIM Service Provider implementation with custom stores that fully support filters and patch. This is compatible with AzureAD and Okta
+- **Rsk.ScimExamples.postman_collection.json** contains SCIM example requests
 
 ## Getting Started
 

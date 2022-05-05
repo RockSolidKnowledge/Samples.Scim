@@ -1,0 +1,475 @@
+{
+	"info": {
+		"_postman_id": "f5cedf2a-b807-4bef-a038-ce0e6f08ed4a",
+		"name": "Rsk.ScimExamples",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"User_Id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"johndoe@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"John\",\r\n    \"familyName\": \"Doe\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - Update",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\":\"{{User_Id}}\",\r\n  \"name\":{\r\n    \"familyName\":\"Doe 1\",\r\n    \"givenName\":\"John 1\"\r\n  },\r\n  \"locale\": \"en-gb\",\r\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"Human Resources\"\r\n  },\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - Update name",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"],\r\n  \"Operations\": [\r\n        {\r\n            \"op\": \"replace\",\r\n            \"path\" : \"name.givenName\",\r\n            \"value\": \"newGivenName\"\r\n            \r\n        }\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/{{User_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						"{{User_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - DeActivate",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"schemas\": [\r\n        \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\r\n    ],\r\n    \"Operations\": [\r\n        {\r\n            \"op\": \"replace\",\r\n            \"value\": {\r\n                \"active\": false\r\n            }\r\n        }\r\n    ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/{{User_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						"{{User_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Group - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"Group_Id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"displayName\": \"Programmers\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Group - Update",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"id\": \"{{Group_Id}}\",\r\n  \"displayName\": \"Programmers - c#\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Group - Add Member",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"schemas\": [ \"urn:ietf:params:scim:api:messages:2.0:PatchOp\" ],\r\n  \"Operations\": [\r\n    {\r\n      \"op\": \"add\",\r\n      \"path\": \"members\",\r\n            \"value\": [\r\n                {\r\n                    \"value\": \"{{User_Id}}\"\r\n                }\r\n            ]\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/{{Group_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						"{{Group_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Groups - Remove Member",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"schemas\": [\r\n        \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\r\n    ],\r\n    \"Operations\": [\r\n        {\r\n            \"op\": \"Remove\",\r\n            \"path\": \"members\",\r\n            \"value\": [\r\n                {\r\n                    \"value\": \"{{User_Id}}\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/{{Group_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						"{{Group_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users - All",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"user-agent": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users?sortBy=userName&sortOrder=ascending",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "userName"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ascending"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users - By ID",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/{{User_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						"{{User_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Groups - All",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups?filter=displayName sw \"Prog\"",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "displayName sw \"Prog\""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Groups - By ID",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/{{Group_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						"{{Group_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Groups - DELETE",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/groups/{{Group_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"groups",
+						"{{Group_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add user to group",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
