@@ -21,7 +21,7 @@ namespace Shared.Mappers
                     GivenName = resource.Name.FirstName
                 },
                 Id = resource.Id,
-                Extensions = new Dictionary<string, object>
+                Extensions = new Dictionary<string, ResourceExtension>
                 {
                     [ScimSchemas.EnterpriseUserSchema] = new EnterpriseUser
                     {

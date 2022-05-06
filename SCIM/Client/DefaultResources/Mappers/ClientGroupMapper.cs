@@ -16,7 +16,7 @@ namespace DefaultResources.Mappers
                 {
                     ScimRef = m.Uri,
                     Value = m.Id
-                })
+                }).ToList()
             };
         }
 
