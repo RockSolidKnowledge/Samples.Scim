@@ -25,13 +25,14 @@ builder.Services
         {
             Licensee = "DEMO",
             LicenseKey =
-                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjItMDUtMDhUMDA6MDA6MDAiLCJpYXQiOiIyMDIyLTA0LTA4VDEwOjMwOjE5Iiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.fpNhR/DUV2KwQtbL/AKZTlvp8Itfv0UVCbqFDJP7TWpaf+cMS7MElLUuvUDB1NH8zu0TdgH0Lk2fW+BcmYsS0SdN6HwJ8kVr8sqefX0xNWiRqT/zNnxZUpDzP44ZVwZ1yuf5OaToKKoiGL3PksB72G5kp6rJdHYTBNlF43agkk791Iddlo9A9g8402OUYsq8qpo4qyBHkhmmAuHRNHk1221f1g1uDLhzefLq+ybCkc/JTpnKxnDINw3nmXraKTLWdPVXGvncvyhVwpw7+OFtGu8RIEItL9IvolZX6ATdimSv003tncMJcQmRZQ0hN7MkifaMwuksC2PYz9J4aJHGyBEgiz1woim+OqNs/MNiK5lDu99KOqqkm/2Y9XB649nwPmv/TjLysJRYp0SF9nzTwq70ncARBv0DsCatzOOObXFwzb7dSiIsMByF01hZFd5jvBoSI/WJsT393AP17l/PX1Cs0b7XEeb4haLEOfSLxByG/VouboELyseY7NY17MYzDLEGJ58yaWC9pvbYPI1afeAx/rnEFOT2rtH1Z7FoB9AJWLtEowRdcdvFu7d/9WnwhnMcVhQ899kPoDgcnnfCbD+IKBMItmsdu9LcIv4IflWxB0EIHKO3pJOGaYxrNa1koaPyjSikQUwJx+IrrCAYujas3Taj5clDVtd9EH6QnM4="
+                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjItMDYtMDhUMDA6MDA6MDAiLCJpYXQiOiIyMDIyLTA1LTA4VDE0OjMzOjExIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.HanfXDuwStGbNanJGe/40iFwUzjnJ/bLjcIPcwlDbmuwOTT6f3H9RXf1U7CkpplefsLlueYQ5AJHz1tzrJzIkVbCOtBAC3zl8WIDU4uNXC4SeyyVD605NJDNZMLokbyGAkh1T8hwaX1J54Pcm2essUELRUWzVSNQZFZpDdfD+qU+9EsfyVa+xk15gy+ERC49mdAq1LTKETux0gjWQ93++6oxY6hTJ0OL1hkZ39Fh4UAWPRZIhfoACYZ2i2qVIwwJd2cq4mbyEfVTbF4z4eL8pycw6MtERd9GwEoafjUYDp5Z12CnqrF/XFuVEWXtfUhkL1wA7/bEBdheNHWWI21x2SwmjVGHYlc2RXXT1dX0cxBEKzfbID4l9Ee2aZH5QyoZ5UPuk2UWXvHSf1CP4djRVSDKxHPnfPhhqFteo+nKislTi5dQ0x6yZwxlsP0PsrFrzDJy2jEOpShRQGkKB+e/lhTGfV5pHxItYFf9JZ2aTDgQHJoFOLbU4m2JztlsRzyO9UCCJvuqtWXLPsX6Q6HHfYlcJ48ZK3A14hw79Bo2KrIefLol39Xp/VyD4a4BK4kkCWDaWsG0/fCTO+Y1cxE9p5EsVRpL/52QTj3+Qtird0spAqPrLdim7K9ftdYu6MHkrWCj+JQI/tgtKH592PrGfrVoyAztf2BWbp2LEQzGGj0="
+            
         })
-    .AddResource<User, AppUserStore>(ScimConstants.Schemas.User, "users")
-    .AddResourceExtension<User, EnterpriseUser>(ScimConstants.Schemas.EnterpriseUser)
-    .AddResource<Group, AppRoleStore>(ScimConstants.Schemas.Group, "groups")
+    .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
+    .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
+    .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
     .AddFilterPropertyExpressionCompiler()
-    .MapScimAttributes(ScimConstants.Schemas.User, mapper =>
+    .MapScimAttributes(ScimSchemas.User, mapper =>
     {
         mapper
             .Map<AppUser>("id", u => u.Id)
@@ -41,12 +42,12 @@ builder.Services
             .Map<AppUser>("active", u => u.IsActive)
             .Map<AppUser>("locale", u => u.Locale);
     })
-    .MapScimAttributes(ScimConstants.Schemas.EnterpriseUser, mapper =>
+    .MapScimAttributes(ScimSchemas.EnterpriseUser, mapper =>
     {
         mapper
             .Map<AppUser>("department", u => u.Department);
     })
-    .MapScimAttributes(ScimConstants.Schemas.Group, mapper =>
+    .MapScimAttributes(ScimSchemas.Group, mapper =>
     {
         mapper
             .Map<AppRole>("id", r => r.Id)

@@ -23,7 +23,7 @@ namespace Shared.Mappers
                 Id = resource.Id,
                 Extensions = new Dictionary<string, ResourceExtension>
                 {
-                    [ScimSchemas.EnterpriseUserSchema] = new EnterpriseUser
+                    [ScimSchemas.EnterpriseUser] = new EnterpriseUser
                     {
                         Organization = resource.Organization,
                         Department = resource.Department
@@ -35,7 +35,7 @@ namespace Shared.Mappers
         public ClientUser FromScimResource(User scimResource)
         {
             var enterpriseUser =
-                scimResource?.Extensions.First(e => e.Key == ScimSchemas.EnterpriseUserSchema)
+                scimResource?.Extensions.First(e => e.Key == ScimSchemas.EnterpriseUser)
                     .Value as EnterpriseUser;
              
             return new ClientUser

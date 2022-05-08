@@ -95,24 +95,29 @@ public class AppUserStore : IScimStore<User>
     private Dictionary<string, Action<AppUser, object>> replaceMethods =
         new()
         {
-            [$"{ScimConstants.Schemas.User}:name"] = (source, value) =>
+            [$"{ScimSchemas.User}:name"] = (source, value) =>
             {
                 Name name = value as Name;
                 source.FirstName = name?.GivenName;
                 source.LastName = name?.FamilyName;
             },   
-            [$"{ScimConstants.Schemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
-            [$"{ScimConstants.Schemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
-            [$"{ScimConstants.Schemas.User}:active"] = (source, value) => source.IsActive = (bool)value,
-            [$"{ScimConstants.Schemas.User}:locale"] = (source, value) => source.Locale = (string)value,
-            [$"{ScimConstants.Schemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
+            [$"{ScimSchemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
+            [$"{ScimSchemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
+            [$"{ScimSchemas.User}:active"] = (source, value) => source.IsActive = (bool)value,
+            [$"{ScimSchemas.User}:locale"] = (source, value) => source.Locale = (string)value,
+            [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
         };
 
     public async Task PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
     {
         AppUser user = await FindUser(resourceId);
+
+        if (!updates.All(pc => pc.Operation == PatchOperation.Replace))
+        {
+            throw new ScimStoreException("Only Replace patch command supported for Users");
+        }
        
-        foreach (PatchCommand replaceCmd in updates.Where(pc => pc.Operation == PatchOperation.Replace))
+        foreach (PatchCommand replaceCmd in updates)
         {
             if (replaceCmd.Path != null)
             {
@@ -155,7 +160,7 @@ public class AppUserStore : IScimStore<User>
             },
             Extensions = new Dictionary<string, ResourceExtension>()
             {
-                [ScimConstants.Schemas.EnterpriseUser] = new EnterpriseUser() { Department = user.Department }
+                [ScimSchemas.EnterpriseUser] = new EnterpriseUser() { Department = user.Department }
             }
         };
     }
@@ -172,13 +177,13 @@ public class AppUserStore : IScimStore<User>
             primaryEmail = resource.UserName;
         }
 
-        resource.Extensions.TryGetValue(ScimConstants.Schemas.EnterpriseUser, out ResourceExtension resExt);
+        resource.Extensions.TryGetValue(ScimSchemas.EnterpriseUser, out ResourceExtension resExt);
         var enterpriseUser = resExt as EnterpriseUser;
 
         user.Username = primaryEmail ?? user.Username;
         user.Locale = resource.Locale ?? user.Locale;
-        user.FirstName = resource.Name.GivenName ?? user.FirstName;
-        user.LastName = resource.Name.FamilyName ?? user.LastName;
+        user.FirstName = resource.Name?.GivenName ?? user.FirstName;
+        user.LastName = resource.Name?.FamilyName ?? user.LastName;
         user.Department = enterpriseUser?.Department ?? user.Department;
 
         user.IsActive = resource?.Active  ?? user.IsActive ;

@@ -6,6 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0-preview7" />
+    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0-preview15" />
   </ItemGroup>
 </Project>

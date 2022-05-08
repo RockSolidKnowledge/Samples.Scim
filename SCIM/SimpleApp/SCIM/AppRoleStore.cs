@@ -144,8 +144,8 @@ public class AppRoleStore : IScimStore<Group>
         return role;
     }
 
-    private static readonly AttributePathExpression groupMembers = new AttributePathExpression(ScimConstants.Schemas.Group, "members");
-    private static readonly AttributePathExpression displayName = new AttributePathExpression(ScimConstants.Schemas.Group, "displayName");
+    private static readonly AttributePathExpression groupMembers = new AttributePathExpression(ScimSchemas.Group, "members");
+    private static readonly AttributePathExpression displayName = new AttributePathExpression(ScimSchemas.Group, "displayName");
     
     private static readonly PathExpression groupPathExpression = new PathExpression(groupMembers);
     private static readonly PathExpression displayNameExpression = new PathExpression(displayName);
@@ -224,7 +224,7 @@ public class AppRoleStore : IScimStore<Group>
 
         if (role == null)
         {
-            throw new ScimStoreItemDoesAlreadyExistException($"Can not find group with id {id}");
+            throw new ScimStoreItemAlreadyExistException($"Can not find group with id {id}");
         }
         
         ctx.Roles.Remove(role);
@@ -237,7 +237,7 @@ public class AppRoleStore : IScimStore<Group>
 
         if (role == null)
         {
-            throw new ScimStoreItemDoesAlreadyExistException($"Can not find group with id {id}");
+            throw new ScimStoreItemAlreadyExistException($"Can not find group with id {id}");
         }
         return role;
     }
