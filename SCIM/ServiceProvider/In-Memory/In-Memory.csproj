@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0/TargetFramework>
     <RootNamespace>In_Memory</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0-preview15" />
+    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0" />
   </ItemGroup>
 </Project>

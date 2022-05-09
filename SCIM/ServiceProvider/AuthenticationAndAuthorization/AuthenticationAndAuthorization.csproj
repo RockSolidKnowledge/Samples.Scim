@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0-preview15" />
+    <PackageReference Include="Rsk.AspNetCore.Scim" Version="1.0.0" />
     <PackageReference Include="idunno.Authentication.Basic" Version="2.2.2" />
   </ItemGroup>
 
