@@ -50,7 +50,7 @@ public class AppRoleStore : IScimStore<Group>
             {
                 Value = u.Id,
                 Display = $"{u.FirstName} {u.LastName}",
-                Type = "user",
+                Type = "User",
                 ScimRef = $"/scim/users/{u.Id}" // TODO: This needs to change to be full URI
             }).ToList()
         };
