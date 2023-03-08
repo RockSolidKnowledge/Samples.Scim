@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.InMemory.ValueGeneration.Internal;
 using Microsoft.Extensions.Options;
@@ -25,8 +26,7 @@ builder.Services
         {
             Licensee = "DEMO",
             LicenseKey =
-                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjItMDYtMDhUMDA6MDA6MDAiLCJpYXQiOiIyMDIyLTA1LTA4VDE0OjMzOjExIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.HanfXDuwStGbNanJGe/40iFwUzjnJ/bLjcIPcwlDbmuwOTT6f3H9RXf1U7CkpplefsLlueYQ5AJHz1tzrJzIkVbCOtBAC3zl8WIDU4uNXC4SeyyVD605NJDNZMLokbyGAkh1T8hwaX1J54Pcm2essUELRUWzVSNQZFZpDdfD+qU+9EsfyVa+xk15gy+ERC49mdAq1LTKETux0gjWQ93++6oxY6hTJ0OL1hkZ39Fh4UAWPRZIhfoACYZ2i2qVIwwJd2cq4mbyEfVTbF4z4eL8pycw6MtERd9GwEoafjUYDp5Z12CnqrF/XFuVEWXtfUhkL1wA7/bEBdheNHWWI21x2SwmjVGHYlc2RXXT1dX0cxBEKzfbID4l9Ee2aZH5QyoZ5UPuk2UWXvHSf1CP4djRVSDKxHPnfPhhqFteo+nKislTi5dQ0x6yZwxlsP0PsrFrzDJy2jEOpShRQGkKB+e/lhTGfV5pHxItYFf9JZ2aTDgQHJoFOLbU4m2JztlsRzyO9UCCJvuqtWXLPsX6Q6HHfYlcJ48ZK3A14hw79Bo2KrIefLol39Xp/VyD4a4BK4kkCWDaWsG0/fCTO+Y1cxE9p5EsVRpL/52QTj3+Qtird0spAqPrLdim7K9ftdYu6MHkrWCj+JQI/tgtKH592PrGfrVoyAztf2BWbp2LEQzGGj0="
-            
+                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjMtMDMtMjdUMDA6MDA6MDAiLCJpYXQiOiIyMDIzLTAyLTI3VDExOjAyOjIxIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.WVB+bj/KUUBuGgoIOK7EwnT97T2su4ovkXaOvxUTL2FKHa1Jfphb2MP0RB2ozq/0WedoyotSEAE2H0jJ00GN+FcNbn0/LmnCwjKcWGV+8970uFWaVCKE/zcj96894fsk/x4br3mF/6b92D+7K6vcKqMOPs/Oxd0uIH6/PESdQZNGXlMt/ac+rlPigxI63QtDClLtSMr1Cojd9w+zrvyIuAQdL+IQhKATxQZ9MEsEt2uogAHV1m3HoVl715LAdL0gjBqQwiVx0GvewDrIzFM1X+R90irg2Uo6Kq9y57vBbdGZlJuq/XQgHoAGptduE85jHequUgUFLO0J4WdbTUaf+B7TTSeAKe9JLAGTE9cTb4zqGGGGR87+B5+Fh7hqcvpjusjySaxRBTATgA3FBoaVvE2UmF7q3q9ThAjbOPHojTHzhWIM4w5+CCI81y5vUJ0S9kEw3L8iqEqzrYqkitRKMBV5nWPmpBIw/wufM/47ihNjobKz0XWddudeYnZBA/B27IhVD/J2RMpTleRDZTaKenm2OOxtrFRUmo4My+cEIRUEK8jjPlwBfwtN74OBSXlY2FV2/ME8QUwARL4Aa03uLoc8WFFHNcP1SXg0Yxyb3ShUdgQvgaVaJaQQU9QUggCU/2hT+LYHtAhrmeSX6LkvQUhgijGZJzC2qQeuNth1HCM="
         })
     .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
     .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
@@ -36,10 +36,10 @@ builder.Services
     {
         mapper
             .Map<AppUser>("id", u => u.Id)
-            .Map<AppUser>("userName", u => u.Username)
+            .Map<AppUser>("userName", u => u.NormalizedUsername , ScimFilterAttributeConverters.ToUpper)
             .Map<AppUser>("name.familyName", u => u.LastName)
             .Map<AppUser>("name.givenName", u => u.FirstName)
-            .Map<AppUser>("active", u => u.IsActive)
+            .Map<AppUser>("active", u => u.IsDisabled , ScimFilterAttributeConverters.Inverse)
             .Map<AppUser>("locale", u => u.Locale);
     })
     .MapScimAttributes(ScimSchemas.EnterpriseUser, mapper =>
@@ -59,7 +59,6 @@ builder.Services
 
 
 var app = builder.Build();
-
 
 app.UseScim();
 

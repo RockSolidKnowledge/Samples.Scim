@@ -1,3 +1,5 @@
+using Rsk.AspNetCore.Scim.Models;
+
 namespace SimpleApp.Services;
 
 public class AppUser
@@ -20,7 +22,9 @@ public class AppUser
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? Department { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsDisabled { get; set; }
     
     public ICollection<AppRole> Roles { get; set; }
+
+    public string? NormalizedUsername { get; set; }
 }
