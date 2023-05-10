@@ -62,7 +62,7 @@ public class AppRoleStore : IScimStore<Group>
 
         if (resource.Members != null)
         {
-            resource.Members.Clear();
+            appRole.Members.Clear();
 
             foreach (var member in resource.Members)
             {
