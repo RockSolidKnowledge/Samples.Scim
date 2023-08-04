@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultResources", "Client\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Client\Shared\Shared.csproj", "{742C2863-1050-4E64-B29C-30F0494F3B81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomStoreAndValidation", "ServiceProvider\CustomStoreAndValidation\CustomStoreAndValidation.csproj", "{06D548B1-8671-417B-B122-C157688E9C28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{742C2863-1050-4E64-B29C-30F0494F3B81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{742C2863-1050-4E64-B29C-30F0494F3B81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{742C2863-1050-4E64-B29C-30F0494F3B81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06D548B1-8671-417B-B122-C157688E9C28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06D548B1-8671-417B-B122-C157688E9C28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06D548B1-8671-417B-B122-C157688E9C28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06D548B1-8671-417B-B122-C157688E9C28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +86,7 @@ Global
 		{EE6D1F64-08F3-44C4-B982-213C492A43C6} = {DA3C75BF-04EC-4E67-A7CD-3C57A15A13B1}
 		{1E3C0C99-844B-4B6D-AF4A-49A440DD916D} = {DA3C75BF-04EC-4E67-A7CD-3C57A15A13B1}
 		{742C2863-1050-4E64-B29C-30F0494F3B81} = {DA3C75BF-04EC-4E67-A7CD-3C57A15A13B1}
+		{06D548B1-8671-417B-B122-C157688E9C28} = {C143F57F-4857-4C83-9E40-B57EC9586BFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {560A4393-685C-4067-8054-2FF27856D888}

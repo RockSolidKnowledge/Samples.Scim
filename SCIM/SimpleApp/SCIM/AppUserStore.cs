@@ -56,11 +56,14 @@ public class AppUserStore : IScimStore<User>
 
         return user;
     }
-
-   
-
+    
     public async Task<ScimPageResults<User>> GetAll(IResourceQuery query)
     {
+        if (query.Filter.IsExternalIdEqualityExpression(out string? id))
+        {
+            return new ScimPageResults<User>(Enumerable.Empty<User>(), 0);
+        }
+        
         IQueryable<AppUser> databaseQuery =
         queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
             .Filter(query.Filter)

@@ -5,6 +5,7 @@ using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Filters;
 using Rsk.AspNetCore.Scim.Models;
+using SimpleApp;
 using SimpleApp.SCIM;
 using SimpleApp.Services;
 
@@ -18,44 +19,53 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("Application");
 });
 
-var scimServiceProviderBuilder = 
-builder.Services
-    .AddScimServiceProvider("/scim",
-        new ScimLicensingOptions()
+var scimServiceProviderBuilder =
+    builder.Services
+        .AddScimServiceProvider("/scim",
+            new ScimLicensingOptions()
+            {
+                Licensee = "DEMO",
+                LicenseKey = "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjMtMDktMDRUMDA6MDA6MDAiLCJpYXQiOiIyMDIzLTA4LTA0VDE5OjIwOjQwIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.Or/7kSgVDGFeSYsdoQcfRl028AWIEyIhKI3QyhTBh772AuoHP/Mj1ufpu3hC1oylcwFZlyfgyIRpN1d5qQasHKMvzc8Nq8ILaGbS7SYqXNIFEhF0jaHcaFtG970mRa4DwU8lULac1kRcg6bvcrGRLD8VveBPwZFQ9ixxCLrEjNVSKTMoo4ilYqwEl1GkG0gcHFsnot7IPSruRBfo+oHzrO9Qa3Wv2mfoB5hyEpKz2UNCPW5gfA93krYcKfy4ExV0ZerqkB6NyPkgB6DOxNMftJjrqY/oFh9s35Q7H4ZpKnvvOkQCfKq5Xu6TCmF+EspzcXR7DI4bK6GYJa+5AyoCqAOU0mwprIoOaE9mEMImkxxgnXmZwtOdkLCCTxKHLDJ2WHX0Tqwbx+rMgBP8JRXJT5jx2V1nzjCtiNXFTIVAzGcKHrDCXFItEJk1nhQPuDTF1R4JYQnKX+t0ftfaZdmZYskC5ZM+lHB+tGAyCCykQYURzSTRl+l9Ycbb3gWoXbsa6Z6FLyp6rO0HzzAUpBIRePvvkvN5Ndjz/7VLcGdrWLuWLHeCp0JiR+WSd5bQMhUz0UMplh8dtvMAbPNLO2G7hkmWQ5w2Djh7jdEx5FtgTwUxlaQZS1LOplh8uahU3S8Bmr9lKko5uBu4dQsbmbiR577NTdk/80Fjdk5oIlSg7cc=" } , new ScimServiceProviderConfigOptions()
+            {
+                FilteringSupported = false,
+                SortingSupported = true,
+                PatchSupported = true,
+             //  IgnoreMissingExtensionSchemas = true
+            })
+        .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
+        .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
+     //   .AddResourceExtension<User,Employment>("urn:ietf:params:scim:schemas:extension:employment:2.0:User")
+        .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
+        .AddFilterPropertyExpressionCompiler()
+        .MapScimAttributes<AppUser>(ScimSchemas.User, mapper =>
         {
-            Licensee = "DEMO",
-            LicenseKey =
-                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjItMDYtMDhUMDA6MDA6MDAiLCJpYXQiOiIyMDIyLTA1LTA4VDE0OjMzOjExIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.HanfXDuwStGbNanJGe/40iFwUzjnJ/bLjcIPcwlDbmuwOTT6f3H9RXf1U7CkpplefsLlueYQ5AJHz1tzrJzIkVbCOtBAC3zl8WIDU4uNXC4SeyyVD605NJDNZMLokbyGAkh1T8hwaX1J54Pcm2essUELRUWzVSNQZFZpDdfD+qU+9EsfyVa+xk15gy+ERC49mdAq1LTKETux0gjWQ93++6oxY6hTJ0OL1hkZ39Fh4UAWPRZIhfoACYZ2i2qVIwwJd2cq4mbyEfVTbF4z4eL8pycw6MtERd9GwEoafjUYDp5Z12CnqrF/XFuVEWXtfUhkL1wA7/bEBdheNHWWI21x2SwmjVGHYlc2RXXT1dX0cxBEKzfbID4l9Ee2aZH5QyoZ5UPuk2UWXvHSf1CP4djRVSDKxHPnfPhhqFteo+nKislTi5dQ0x6yZwxlsP0PsrFrzDJy2jEOpShRQGkKB+e/lhTGfV5pHxItYFf9JZ2aTDgQHJoFOLbU4m2JztlsRzyO9UCCJvuqtWXLPsX6Q6HHfYlcJ48ZK3A14hw79Bo2KrIefLol39Xp/VyD4a4BK4kkCWDaWsG0/fCTO+Y1cxE9p5EsVRpL/52QTj3+Qtird0spAqPrLdim7K9ftdYu6MHkrWCj+JQI/tgtKH592PrGfrVoyAztf2BWbp2LEQzGGj0="
-            
+            mapper
+                .Map("id", u => u.Id)
+                .Map("userName", u => u.Username)
+                .Map("name.familyName", u => u.LastName)
+                .Map("name.givenName", u => u.FirstName)
+                .Map("active", u => u.IsActive)
+                .Map("locale", u => u.Locale);
         })
-    .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
-    .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
-    .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
-    .AddFilterPropertyExpressionCompiler()
-    .MapScimAttributes(ScimSchemas.User, mapper =>
-    {
-        mapper
-            .Map<AppUser>("id", u => u.Id)
-            .Map<AppUser>("userName", u => u.Username)
-            .Map<AppUser>("name.familyName", u => u.LastName)
-            .Map<AppUser>("name.givenName", u => u.FirstName)
-            .Map<AppUser>("active", u => u.IsActive)
-            .Map<AppUser>("locale", u => u.Locale);
-    })
-    .MapScimAttributes(ScimSchemas.EnterpriseUser, mapper =>
-    {
-        mapper
-            .Map<AppUser>("department", u => u.Department);
-    })
-    .MapScimAttributes(ScimSchemas.Group, mapper =>
-    {
-        mapper
-            .Map<AppRole>("id", r => r.Id)
-            .Map<AppRole>("displayName", r => r.Name)
-            .Map<AppRole>("members", r => r.Members);
-
-        mapper.Map<AppUserRole>("value", r => r.AppUserId);
-    });
+        .MapScimAttributes<AppUser>(ScimSchemas.EnterpriseUser, mapper =>
+        {
+            mapper
+                .Map("department", u => u.Department);
+        })
+        .MapScimAttributes<AppRole>(ScimSchemas.Group, mapper =>
+        {
+            mapper
+                .Map("id", r => r.Id)
+                .Map("displayName", r => r.Name)
+                .MapCollection<Member>("members", r => r.Members, member =>
+                {
+                    member
+                        .Map("value", m => m.Value)
+                        .Map("display", m => m.Display)
+                        .Map("type", m => m.Type);
+                });
+                
+        });
 
 
 var app = builder.Build();
