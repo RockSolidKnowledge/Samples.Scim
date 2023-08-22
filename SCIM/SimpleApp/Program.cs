@@ -19,6 +19,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("Application");
 });
 
+ScimServiceProviderConfigOptions ServiceProviderConfigOptions = new()
+{
+    FilteringSupported = true,
+    PatchSupported = true,
+    SortingSupported = true,
+    FilterMaxResourceCount = 100
+};
+
 var scimServiceProviderBuilder = 
 builder.Services
     .AddScimServiceProvider("/scim",
@@ -26,8 +34,8 @@ builder.Services
         {
             Licensee = "DEMO",
             LicenseKey =
-                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjMtMDMtMjdUMDA6MDA6MDAiLCJpYXQiOiIyMDIzLTAyLTI3VDExOjAyOjIxIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.WVB+bj/KUUBuGgoIOK7EwnT97T2su4ovkXaOvxUTL2FKHa1Jfphb2MP0RB2ozq/0WedoyotSEAE2H0jJ00GN+FcNbn0/LmnCwjKcWGV+8970uFWaVCKE/zcj96894fsk/x4br3mF/6b92D+7K6vcKqMOPs/Oxd0uIH6/PESdQZNGXlMt/ac+rlPigxI63QtDClLtSMr1Cojd9w+zrvyIuAQdL+IQhKATxQZ9MEsEt2uogAHV1m3HoVl715LAdL0gjBqQwiVx0GvewDrIzFM1X+R90irg2Uo6Kq9y57vBbdGZlJuq/XQgHoAGptduE85jHequUgUFLO0J4WdbTUaf+B7TTSeAKe9JLAGTE9cTb4zqGGGGR87+B5+Fh7hqcvpjusjySaxRBTATgA3FBoaVvE2UmF7q3q9ThAjbOPHojTHzhWIM4w5+CCI81y5vUJ0S9kEw3L8iqEqzrYqkitRKMBV5nWPmpBIw/wufM/47ihNjobKz0XWddudeYnZBA/B27IhVD/J2RMpTleRDZTaKenm2OOxtrFRUmo4My+cEIRUEK8jjPlwBfwtN74OBSXlY2FV2/ME8QUwARL4Aa03uLoc8WFFHNcP1SXg0Yxyb3ShUdgQvgaVaJaQQU9QUggCU/2hT+LYHtAhrmeSX6LkvQUhgijGZJzC2qQeuNth1HCM="
-        })
+                "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjMtMDgtMDVUMDA6MDA6MDAiLCJpYXQiOiIyMDIzLTA3LTA1VDEzOjM1OjM1Iiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.dWm6Ib4qe4HUx8vn8iK0iUvsmUTj+/7Xxo4dimzTXKKQrefi9UV9pAitN4X75IgdvUabtCb5b6iRfyfkvSwz3VZ3YplCZ/jnNuGSj3rzUJLIfECdCXcn3m7k86DGLzrgjVxB6QuxiRPk6B+LburNqhD+GYIeb52TKY+jymHvDLjubp80A915l91dYw/+6bNJC5JcDocdjfkRyHnvE2L/aRAiueSJR5zRBch8LVFBDylsfIEQt/qXw3QzLGQZbpcSPpxoZ7OPUcfwxv2cJHpoNK7+Jqd9l+ZEP8B/913F6AG4a5hJ3JBub+gsF07/cHjP2bLyXEKEFm9SVKhDmS9Bwjlhca4vpGtsyV1oqq2HcFKRjhSHnFIoQ+5bMrYWQr5/hfDzjLr9DIAccS+5LXgUyyEczdHwJYQWzxWo3jB7+7cUn24/MTyNXlVd2y2//vFSALJJNmDWMXfCYUUOCAK+P2jw2bbQF10th1A5CewDl7ovppCNBWiTD2Cbj3uzeIJqYCwSBE9WqqFKB+WpwUD81QBmmFARIqQYButohRsGmmMieK0zcdHec9Fk7iQaCv7KlSHqwPIVBTyEKPz8tKX8GSjssX2+Yo6Seh7AkKNUIOrHGLjxA3JsVPlVfzyspTQZcz/WtA5ZnhKL+LN7/jDZdHz2mp+HO+kmRjPBaUUL3Ag="
+        }, ServiceProviderConfigOptions)
     .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
     .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
     .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
