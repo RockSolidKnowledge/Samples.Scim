@@ -6,7 +6,6 @@ using Rsk.AspNetCore.Scim.Models;
 using Rsk.AspNetCore.Scim.Stores;
 using SimpleApp.Services;
 
-#nullable disable
 namespace SimpleApp.SCIM;
 
 public class AppUserStore : IScimStore<User>
@@ -47,7 +46,7 @@ public class AppUserStore : IScimStore<User>
 
     private async Task<AppUser> FindUser(string id)
     {
-        AppUser user = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
+        AppUser? user = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
         {
@@ -100,7 +99,7 @@ public class AppUserStore : IScimStore<User>
         {
             [$"{ScimSchemas.User}:name"] = (source, value) =>
             {
-                Name name = value as Name;
+                Name? name = value as Name;
                 source.FirstName = name?.GivenName;
                 source.LastName = name?.FamilyName;
             },   
@@ -111,7 +110,7 @@ public class AppUserStore : IScimStore<User>
             [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
         };
 
-    public async Task PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
+    public async Task<User?> PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
     {
         AppUser user = await FindUser(resourceId);
 
@@ -124,7 +123,7 @@ public class AppUserStore : IScimStore<User>
         {
             if (replaceCmd.Path != null)
             {
-                if (replaceMethods.TryGetValue(replaceCmd.Path.ToString(), out Action<AppUser, object> replaceAction))
+                if (replaceMethods.TryGetValue(replaceCmd.Path.ToString(), out Action<AppUser, object>? replaceAction))
                 {
                     replaceAction!(user, replaceCmd.Value);
                 }
@@ -136,15 +135,12 @@ public class AppUserStore : IScimStore<User>
         }
 
         await ctx.SaveChangesAsync();
+
+        return null;
     }
     
     private static User MapAppUserToScimUser(AppUser user)
     {
-        if (user == null)
-        {
-            return null;
-        }
-
         return new User()
         {
             Id = user.Id.ToString(),
@@ -170,7 +166,7 @@ public class AppUserStore : IScimStore<User>
     
     private static AppUser MapScimUserToAppUser(User resource, AppUser user)
     {
-        string primaryEmail = resource
+        string? primaryEmail = resource
             .Emails?
             .SingleOrDefault(e => e.Primary == true)
             ?.Value;
@@ -180,7 +176,7 @@ public class AppUserStore : IScimStore<User>
             primaryEmail = resource.UserName;
         }
 
-        resource.Extensions.TryGetValue(ScimSchemas.EnterpriseUser, out ResourceExtension resExt);
+        resource.Extensions.TryGetValue(ScimSchemas.EnterpriseUser, out ResourceExtension? resExt);
         var enterpriseUser = resExt as EnterpriseUser;
 
         user.Username = primaryEmail ?? user.Username;
@@ -195,8 +191,8 @@ public class AppUserStore : IScimStore<User>
 
     private static void PatchFullUser(PatchCommand replaceCmd, AppUser user)
     {
-        var source = replaceCmd.Value as User;
-
+        var source = (User)replaceCmd.Value;
+        
         MapScimUserToAppUser(source, user);
     }
 

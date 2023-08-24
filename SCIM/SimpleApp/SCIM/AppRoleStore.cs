@@ -10,8 +10,6 @@ using SimpleApp.Services;
 
 namespace SimpleApp.SCIM;
 
-#nullable disable
-
 public class AppRoleStore : IScimStore<Group>
 {
     private readonly AppDbContext ctx;
@@ -150,7 +148,7 @@ public class AppRoleStore : IScimStore<Group>
     private static readonly PathExpression groupPathExpression = new PathExpression(groupMembers);
     private static readonly PathExpression displayNameExpression = new PathExpression(displayName);
 
-    public async Task PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
+    public async Task<Group?> PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
     {
         AppRole role = await FindRoleNoMembers(resourceId);
 
@@ -159,7 +157,7 @@ public class AppRoleStore : IScimStore<Group>
             // Replace entire group 
             if (update.Path == null && update.Operation == PatchOperation.Replace)
             {
-                MapScimGroupToAppRole(update.Value as Group, role);
+                MapScimGroupToAppRole((Group)update.Value, role);
             } // add or remove a member by value
             else if (update.Path != null && update.Path.Equals(groupPathExpression) )
             {
@@ -187,11 +185,12 @@ public class AppRoleStore : IScimStore<Group>
                       update.Path != null &&
                       update.Path.Equals(displayNameExpression))
             {
-                role.Name = update.Value as string;
+                role.Name = (string)update.Value;
             }
         }
 
         await ctx.SaveChangesAsync();
+        return null;
     }
 
     private void UpdateMembers(PatchCommand update, Member[] members, AppRole role)
@@ -233,7 +232,7 @@ public class AppRoleStore : IScimStore<Group>
     
     private async Task<AppRole> FindRoleNoMembers(string id)
     {
-        AppRole role = await ctx.Roles.SingleOrDefaultAsync(u => u.Id == id);
+        AppRole? role = await ctx.Roles.SingleOrDefaultAsync(u => u.Id == id);
 
         if (role == null)
         {
