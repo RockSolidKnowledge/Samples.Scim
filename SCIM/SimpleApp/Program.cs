@@ -21,7 +21,7 @@ var scimServiceProviderBuilder =
             new ScimLicensingOptions()
             {
                 Licensee = "DEMO",
-                LicenseKey = "eyJTb2xkRm9yIjowLjAsIktleVByZXNldCI6NiwiU2F2ZUtleSI6ZmFsc2UsIkxlZ2FjeUtleSI6ZmFsc2UsIlJlbmV3YWxTZW50VGltZSI6IjAwMDEtMDEtMDFUMDA6MDA6MDAiLCJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjMtMDktMDRUMDA6MDA6MDAiLCJpYXQiOiIyMDIzLTA4LTA0VDE5OjIwOjQwIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.Or/7kSgVDGFeSYsdoQcfRl028AWIEyIhKI3QyhTBh772AuoHP/Mj1ufpu3hC1oylcwFZlyfgyIRpN1d5qQasHKMvzc8Nq8ILaGbS7SYqXNIFEhF0jaHcaFtG970mRa4DwU8lULac1kRcg6bvcrGRLD8VveBPwZFQ9ixxCLrEjNVSKTMoo4ilYqwEl1GkG0gcHFsnot7IPSruRBfo+oHzrO9Qa3Wv2mfoB5hyEpKz2UNCPW5gfA93krYcKfy4ExV0ZerqkB6NyPkgB6DOxNMftJjrqY/oFh9s35Q7H4ZpKnvvOkQCfKq5Xu6TCmF+EspzcXR7DI4bK6GYJa+5AyoCqAOU0mwprIoOaE9mEMImkxxgnXmZwtOdkLCCTxKHLDJ2WHX0Tqwbx+rMgBP8JRXJT5jx2V1nzjCtiNXFTIVAzGcKHrDCXFItEJk1nhQPuDTF1R4JYQnKX+t0ftfaZdmZYskC5ZM+lHB+tGAyCCykQYURzSTRl+l9Ycbb3gWoXbsa6Z6FLyp6rO0HzzAUpBIRePvvkvN5Ndjz/7VLcGdrWLuWLHeCp0JiR+WSd5bQMhUz0UMplh8dtvMAbPNLO2G7hkmWQ5w2Djh7jdEx5FtgTwUxlaQZS1LOplh8uahU3S8Bmr9lKko5uBu4dQsbmbiR577NTdk/80Fjdk5oIlSg7cc=" } , new ScimServiceProviderConfigOptions()
+                LicenseKey = "..." } , new ScimServiceProviderConfigOptions()
             {
                 FilteringSupported = false,
                 SortingSupported = true,
