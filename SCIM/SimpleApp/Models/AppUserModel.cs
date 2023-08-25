@@ -34,6 +34,6 @@ public class AppUserModel
     public string Name => $"{user.FirstName} {user.LastName}";
     public string Id => user.Id.ToString();
     public string? Culture => user.Locale;
-    public string IsActive => user.IsActive ? "Enabled" : "Disabled";
+    public string IsActive => !user.IsDisabled ? "Enabled" : "Disabled";
 
 }

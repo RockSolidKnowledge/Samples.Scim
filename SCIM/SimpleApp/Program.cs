@@ -1,11 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.InMemory.ValueGeneration.Internal;
-using Microsoft.Extensions.Options;
 using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Constants;
-using Rsk.AspNetCore.Scim.Filters;
 using Rsk.AspNetCore.Scim.Models;
-using SimpleApp;
 using SimpleApp.SCIM;
 using SimpleApp.Services;
 
@@ -44,7 +40,7 @@ var scimServiceProviderBuilder =
                 .Map("userName", u => u.Username)
                 .Map("name.familyName", u => u.LastName)
                 .Map("name.givenName", u => u.FirstName)
-                .Map("active", u => u.IsActive)
+                .Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse)
                 .Map("locale", u => u.Locale);
         })
         .MapScimAttributes<AppUser>(ScimSchemas.EnterpriseUser, mapper =>
@@ -69,7 +65,6 @@ var scimServiceProviderBuilder =
 
 
 var app = builder.Build();
-
 
 app.UseScim();
 

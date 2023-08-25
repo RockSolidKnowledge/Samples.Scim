@@ -105,7 +105,7 @@ public class AppUserStore : IScimStore<User>
             },   
             [$"{ScimSchemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
             [$"{ScimSchemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
-            [$"{ScimSchemas.User}:active"] = (source, value) => source.IsActive = (bool)value,
+            [$"{ScimSchemas.User}:active"] = (source, value) => source.IsDisabled = !(bool)value,
             [$"{ScimSchemas.User}:locale"] = (source, value) => source.Locale = (string)value,
             [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
         };
@@ -145,7 +145,7 @@ public class AppUserStore : IScimStore<User>
         {
             Id = user.Id.ToString(),
             UserName = user.Username,
-            Active = user.IsActive,
+            Active = !user.IsDisabled,
             Emails = new Email[]
             {
                 new Email() { Display = $"{user.FirstName} {user.LastName}", Primary = true, Value = user.Username }
@@ -184,8 +184,9 @@ public class AppUserStore : IScimStore<User>
         user.FirstName = resource.Name?.GivenName ?? user.FirstName;
         user.LastName = resource.Name?.FamilyName ?? user.LastName;
         user.Department = enterpriseUser?.Department ?? user.Department;
+        user.NormalizedUsername = user.Username?.ToUpper();
 
-        user.IsActive = resource?.Active  ?? user.IsActive ;
+        user.IsDisabled = !resource?.Active  ?? user.IsDisabled ;
         return user;
     }
 
