@@ -6,7 +6,7 @@ The SCIM component is available from [https://www.identityserver.com/products/sc
 
 ## Projects
 
-The sample projects implement the QuickStarts from [https://www.identityserver.com/documentation/scim/](https://www.identityserver.com/documentation/scim/). For more information about each project, please refer to the QuickStart documentation.
+The sample projects implement the QuickStarts from [https://www.identityserver.com/documentation/scim/](https://www.identityserver.com/documentation/scim/). For more information about each project, please refer to the QuickStart documentation. You can enable bulk support in any of these projects by passing config options to the `AddScimServiceProvider` call.
 
 Please note that the Service Provider implementations build upon one another based on the QuickStarts.
 

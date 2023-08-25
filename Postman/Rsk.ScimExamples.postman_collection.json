@@ -81,7 +81,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{SCIM_Path_Local}}/users/",
+					"raw": "{{SCIM_Path_Local}}/users/{{User_Id}}",
 					"host": [
 						"{{SCIM_Path_Local}}"
 					],

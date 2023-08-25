@@ -12,11 +12,20 @@ namespace In_Memory
         {
             var licensingOptions = new ScimLicensingOptions
             {
-                Licensee = "Demo",
+                Licensee = "DEMO",
                 LicenseKey = "..."
             };
+            
+            ScimServiceProviderConfigOptions serviceProviderConfigOptions = new()
+            {
+                FilteringSupported = true,
+                PatchSupported = true,
+                SortingSupported = true,
+                FilterMaxResourceCount = 100
+                // IgnoreMissingExtensionSchemas = true
+            };
 
-            services.AddScimServiceProvider("/SCIM", licensingOptions)
+            services.AddScimServiceProvider("/SCIM", licensingOptions, serviceProviderConfigOptions)
                 .AddScimDefaultResourcesForInMemoryStore()
                 .AddResource<Organization>("urn:ietf:params:scim:schemas:RSK:2.0:Organization", "Organizations");
         }
