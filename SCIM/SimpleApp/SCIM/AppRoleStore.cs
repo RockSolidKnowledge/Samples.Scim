@@ -54,7 +54,7 @@ public class AppRoleStore : IScimStore<Group>
         };
     }
     
-    private static void MapScimGroupToAppRole(Group resource, AppRole appRole)
+    private void MapScimGroupToAppRole(Group resource, AppRole appRole)
     {
         appRole.Name = resource.DisplayName ?? appRole.Name;
 
@@ -64,7 +64,9 @@ public class AppRoleStore : IScimStore<Group>
 
             foreach (var member in resource.Members)
             {
-                appRole.Members.Add(new AppUser(member.Value));
+                AppUser user = new(member.Value);
+                ctx.Users.Attach(user);
+                appRole.Members.Add(user);
             }
         }
     }
@@ -214,7 +216,8 @@ public class AppRoleStore : IScimStore<Group>
     
     private void RemoveUserFromRole(AppRole role, string userId)
     {
-        ctx.Remove(new AppUserRole() { AppRoleId = role.Id, AppUserId = userId });
+        var user = ctx.Users.Single(u => u.Id == userId);
+        role.Members.Remove(user);
     }
 
     public async Task Delete(string id)
