@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ded458be-f7ad-4bba-8f1e-61db3ce8ddff",
+		"_postman_id": "ddd59cde-ab5c-4d36-8a80-570a2aebedbf",
 		"name": "Rsk.ScimExamples.Bulk",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "5166947"
@@ -37,6 +37,56 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"userName\": \"bob@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"Bob\",\r\n    \"familyName\": \"Bobsly\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User - Create - Group Member",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"User_Id_Group_Member\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": " application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": " application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"penelope@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"Penelope\",\r\n    \"familyName\": \"Fenelope\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"HR\"\r\n  },\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -136,7 +186,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"displayName\": \"Programmers\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ]\r\n}",
+					"raw": "{\r\n  \"displayName\": \"Programmers\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ],\r\n  \"members\": [\r\n      {\r\n          \"value\": \"{{User_Id_Group_Member}}\",\r\n          \"display\": \"epolenep\"\r\n      }\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -174,7 +224,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:BulkRequest\"],\r\n    \"operations\":[\r\n    {\r\n        \"method\":\"POST\",\r\n        \"path\":\"/Users\",\r\n        \"bulkId\":\"qwerty\",\r\n        \"data\":{\r\n            \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n                \"department\": \"HR\"\r\n            },\r\n            \"schemas\": [\r\n                \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n                \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n            ],\r\n            \"userName\":\"Alice\"\r\n        }\r\n    },\r\n    {\r\n        \"method\":\"PUT\",\r\n        \"path\":\"/Users/e1ac9059-1728-495e-a94a-75da1702a253\",\r\n        \"version\":\"W\\/\\\"3694e05e9dff591\\\"\",\r\n        \"data\":{\r\n            \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\r\n            \"id\":\"b7c14771-226c-4d05-8860-134711653041\",\r\n            \"userName\":\"Bob\"\r\n        }\r\n    },\r\n    {\r\n        \"method\": \"PATCH\",\r\n        \"path\": \"/Groups/f6a8e80a-2512-40d0-9605-5ba15dbaa66f\",\r\n        \"version\": \"W/\\\"edac3253e2c0ef2\\\"\",\r\n        \"data\": {\r\n            \"schemas\": [ \"urn:ietf:params:scim:api:messages:2.0:PatchOp\" ],\r\n            \"operations\": [\r\n                {\r\n                    \"op\": \"add\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"b7c14771-226c-4d05-8860-134711653041\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                },\r\n                {\r\n                    \"op\": \"Remove\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"b7c14771-226c-4d05-8860-134711653041\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                },\r\n                {\r\n                    \"op\": \"add\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"bulkId:qwerty\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    {\r\n        \"method\":\"DELETE\",\r\n        \"path\":\"/Users/5bcd2dbe-bd2f-48b5-af7b-631cd5214487\",\r\n        \"version\":\"W\\/\\\"0ee8add0a938e1a\\\"\"\r\n    }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"schemas\": [\"urn:ietf:params:scim:api:messages:2.0:BulkRequest\"],\r\n    \"operations\":[\r\n    {\r\n        \"method\":\"POST\",\r\n        \"path\":\"/Users\",\r\n        \"bulkId\":\"qwerty\",\r\n        \"data\":{\r\n            \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n                \"department\": \"HR\"\r\n            },\r\n            \"schemas\": [\r\n                \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n                \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n            ],\r\n            \"userName\":\"Alice\"\r\n        }\r\n    },\r\n    {\r\n        \"method\":\"PUT\",\r\n        \"path\":\"/Users/{{User_Id_Put}}\",\r\n        \"version\":\"W\\/\\\"3694e05e9dff591\\\"\",\r\n        \"data\":{\r\n            \"schemas\": [\"urn:ietf:params:scim:schemas:core:2.0:User\"],\r\n            \"id\":\"{{User_Id_Put}}\",\r\n            \"userName\":\"Bob\"\r\n        }\r\n    },\r\n    {\r\n        \"method\": \"PATCH\",\r\n        \"path\": \"/Groups/{{Group_Id}}\",\r\n        \"version\": \"W/\\\"edac3253e2c0ef2\\\"\",\r\n        \"data\": {\r\n            \"schemas\": [ \"urn:ietf:params:scim:api:messages:2.0:PatchOp\" ],\r\n            \"operations\": [\r\n                {\r\n                    \"op\": \"add\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"{{User_Id_Put}}\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                },\r\n                {\r\n                    \"op\": \"Remove\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"{{User_Id_Group_Member}}\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                },\r\n                {\r\n                    \"op\": \"add\",\r\n                    \"path\": \"members\",\r\n                    \"value\": [{\r\n                        \"value\": \"bulkId:qwerty\",\r\n                        \"type\": \"User\"\r\n                    }]\r\n                }\r\n            ]\r\n        }\r\n    },\r\n    {\r\n        \"method\":\"DELETE\",\r\n        \"path\":\"/Users/{{User_Id_Delete}}\",\r\n        \"version\":\"W\\/\\\"0ee8add0a938e1a\\\"\"\r\n    }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -218,7 +268,7 @@
 	"variable": [
 		{
 			"key": "SCIM_Path_Local",
-			"value": "https://localhost:5001/SCIM",
+			"value": "https://localhost:53873/SCIM",
 			"type": "string"
 		},
 		{
@@ -238,6 +288,11 @@
 		},
 		{
 			"key": "Group_Id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "User_Id_Group_Member",
 			"value": "",
 			"type": "string"
 		}
