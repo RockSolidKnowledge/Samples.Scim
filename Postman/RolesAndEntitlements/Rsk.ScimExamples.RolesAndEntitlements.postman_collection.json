@@ -1,0 +1,85 @@
+{
+	"info": {
+		"_postman_id": "febf0b0a-edbe-4ef5-ae6d-3872018f6b00",
+		"name": "Rsk.ScimExamples.RolesAndEntitlements",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5166947"
+	},
+	"item": [
+		{
+			"name": "Get Roles Configuration",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/roles/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"roles",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Entitlements Configuration",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/entitlements/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"entitlements",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SCIM_Path_Local",
+			"value": "https://localhost:53873/SCIM",
+			"type": "string"
+		}
+	]
+}
