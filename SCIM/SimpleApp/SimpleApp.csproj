@@ -10,7 +10,7 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.3"/>
         <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
-        <PackageReference Include="Rsk.AspNetCore.Scim" Version="4.0.0"/>
+        <PackageReference Include="Rsk.AspNetCore.Scim" Version="4.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
