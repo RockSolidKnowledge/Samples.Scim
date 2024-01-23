@@ -62,6 +62,9 @@ public class AppUserStore : IScimStore<User>
         {
             return new ScimPageResults<User>(Enumerable.Empty<User>(), 0);
         }
+
+        string queryAsString = query.Filter.Accept(new DecompileFilter());
+        Console.WriteLine(queryAsString);
         
         IQueryable<AppUser> databaseQuery =
         queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
