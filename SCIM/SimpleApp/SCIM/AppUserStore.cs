@@ -5,20 +5,25 @@ using Rsk.AspNetCore.Scim.Filters;
 using Rsk.AspNetCore.Scim.Models;
 using Rsk.AspNetCore.Scim.Stores;
 using SimpleApp.Services;
+using SimpleApp.Tenancy;
 
 namespace SimpleApp.SCIM;
 
 public class AppUserStore : IScimStore<User>
 {
     private readonly AppDbContext ctx;
+    private readonly IScimTenancyAccessor _tenancyAccessor;
     private readonly IScimQueryBuilderFactory queryBuilderFactory;
 
     public AppUserStore(
         AppDbContext ctx,
+        IScimTenancyAccessor tenancyAccessor,
         IScimQueryBuilderFactory queryBuilderFactory
         )
     {
         this.ctx = ctx;
+        
+        _tenancyAccessor = tenancyAccessor;
         this.queryBuilderFactory = queryBuilderFactory;
     }
 
@@ -31,6 +36,8 @@ public class AppUserStore : IScimStore<User>
     {
         var user = MapScimUserToAppUser(resource, new AppUser());
 
+        user.Tenancy = _tenancyAccessor.TenantId;
+        
         await ctx.Users.AddAsync(user);
         await ctx.SaveChangesAsync();
 
@@ -46,7 +53,8 @@ public class AppUserStore : IScimStore<User>
 
     private async Task<AppUser> FindUser(string id)
     {
-        AppUser? user = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
+        AppUser? user = await GetTenancyUsers()
+            .SingleOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
         {
@@ -55,7 +63,12 @@ public class AppUserStore : IScimStore<User>
 
         return user;
     }
-    
+
+    private IQueryable<AppUser> GetTenancyUsers()
+    {
+        return ctx.Users.Where(u=>u.Tenancy == _tenancyAccessor.TenantId);
+    }
+
     public async Task<ScimPageResults<User>> GetAll(IResourceQuery query)
     {
         if (query.Filter.IsExternalIdEqualityExpression(out string? id))
@@ -64,7 +77,7 @@ public class AppUserStore : IScimStore<User>
         }
         
         IQueryable<AppUser> databaseQuery =
-        queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
+        queryBuilderFactory.CreateQueryBuilder<AppUser>(GetTenancyUsers())
             .Filter(query.Filter)
             .Build();
 

@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Models;
+using SimpleApp;
 using SimpleApp.SCIM;
 using SimpleApp.Services;
+using SimpleApp.Tenancy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,8 +65,11 @@ var scimServiceProviderBuilder =
 
         });
 
+builder.Services.AddScimTenancy();
+
 var app = builder.Build();
 
+app.UseScimTenancy();
 app.UseScim();
 
 // Configure the HTTP request pipeline.

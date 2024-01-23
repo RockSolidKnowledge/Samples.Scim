@@ -12,7 +12,8 @@ public class AppUser
     {
         Id = id;
     }
-    
+
+    public string Tenancy { get; set; } = String.Empty;
     
     public string Id { get;  }
     public string? Username { get; set; }

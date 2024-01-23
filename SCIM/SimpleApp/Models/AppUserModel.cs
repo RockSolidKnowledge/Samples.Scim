@@ -29,7 +29,7 @@ public class AppUserModel
     {
         this.user = user;
     }
-
+    
     public string? Username => user.Username;
     public string Name => $"{user.FirstName} {user.LastName}";
     public string Id => user.Id.ToString();
