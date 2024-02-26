@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServiceProvider", "ServiceP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleApp", "SimpleApp\SimpleApp.csproj", "{7E66F33C-E3F0-45D4-AA80-93A8D900B5A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RolesAndEntitlements", "RolesAndEntitlements\RolesAndEntitlements.csproj", "{6EDB36F5-DA5A-45B6-A4C1-A8A73BF37AB3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{7E66F33C-E3F0-45D4-AA80-93A8D900B5A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E66F33C-E3F0-45D4-AA80-93A8D900B5A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E66F33C-E3F0-45D4-AA80-93A8D900B5A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EDB36F5-DA5A-45B6-A4C1-A8A73BF37AB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EDB36F5-DA5A-45B6-A4C1-A8A73BF37AB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EDB36F5-DA5A-45B6-A4C1-A8A73BF37AB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EDB36F5-DA5A-45B6-A4C1-A8A73BF37AB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

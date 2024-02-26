@@ -53,6 +53,182 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Add User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"User_Id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"dwayne@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"Dwayne\",\r\n    \"middleName\": \"The Rock\",\r\n    \"familyName\": \"Johnson\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"The People\"\r\n  },\r\n  \"roles\": [\r\n      {\r\n        \"value\": \"us_team_lead\",\r\n        \"display\": \"U.S. Team Lead\",\r\n        \"primary\": true\r\n      }\r\n  ],\r\n  \"entitlements\": [\r\n    {\r\n      \"value\": \"1\"\r\n    },\r\n    {\r\n      \"value\": \"3\"\r\n    }\r\n  ],\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users/{{User_Id}}",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users",
+						"{{User_Id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User Fails Role Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"User_Id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"dwayne@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"Dwayne\",\r\n    \"middleName\": \"The Rock\",\r\n    \"familyName\": \"Johnson\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"The People\"\r\n  },\r\n  \"roles\": [\r\n      {\r\n        \"value\": \"gb_team_lead\",\r\n        \"display\": \"GB Team Lead\",\r\n        \"primary\": true\r\n      },\r\n      {\r\n        \"value\": \"us_team_lead\",\r\n        \"display\": \"U.S. Team Lead\",\r\n        \"primary\": true\r\n      },\r\n      {\r\n        \"value\": \"nw_regional_lead\",\r\n        \"display\": \"Northwest Regional Lead\",\r\n        \"primary\": true\r\n      }\r\n  ],\r\n  \"entitlements\": [\r\n    {\r\n      \"value\": \"1\"\r\n    }\r\n  ],\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/SCIM/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"SCIM",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add User Fails Entitlement Validation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"postman.setEnvironmentVariable(\"User_Id\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/scim+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/scim+json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"userName\": \"dwayne@example.com\",\r\n  \"name\": {\r\n    \"givenName\": \"Dwayne\",\r\n    \"middleName\": \"The Rock\",\r\n    \"familyName\": \"Johnson\"\r\n  },\r\n  \"locale\": \"en-US\",\r\n  \"active\": true,\r\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n    \"department\": \"The People\"\r\n  },\r\n  \"roles\": [\r\n      {\r\n        \"value\": \"us_team_lead\",\r\n        \"display\": \"U.S. Team Lead\"\r\n      }\r\n  ],\r\n  \"entitlements\": [\r\n    {\r\n      \"value\": \"4141414141\",\r\n      \"type\": \"type 1\",\r\n      \"primary\": true\r\n    },\r\n    {\r\n      \"value\": \"515151\",\r\n      \"type\": \"type 1\",\r\n      \"primary\": true\r\n    }\r\n  ],\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\r\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/SCIM/users/",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"SCIM",
+						"users",
+						""
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -79,6 +255,11 @@
 		{
 			"key": "SCIM_Path_Local",
 			"value": "https://localhost:53873/SCIM",
+			"type": "string"
+		},
+		{
+			"key": "User_Id",
+			"value": "",
 			"type": "string"
 		}
 	]

@@ -9,13 +9,12 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.3"/>
-        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
         <PackageReference Include="Rsk.AspNetCore.Scim" Version="5.0.0"/>
     </ItemGroup>
 
+
+
     <ItemGroup>
-        <Folder Include="Pages"/>
+      <_ContentIncludedByDefault Remove="Views\Account\Index.cshtml" />
     </ItemGroup>
-
-
 </Project>
