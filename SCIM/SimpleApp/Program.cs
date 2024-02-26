@@ -21,7 +21,7 @@ var scimServiceProviderBuilder =
             new ScimLicensingOptions()
             {
                 Licensee = "DEMO",
-                LicenseKey = "..." } , new ScimServiceProviderConfigOptions()
+                LicenseKey = "Get a license key form https://www.identityserver.com/products/scim-for-aspnet" } , new ScimServiceProviderConfigOptions()
             {
                 FilteringSupported = false,
                 SortingSupported = true,
