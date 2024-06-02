@@ -21,18 +21,21 @@ var scimServiceProviderBuilder =
             new ScimLicensingOptions()
             {
                 Licensee = "DEMO",
-                LicenseKey = "Get a license key form https://www.identityserver.com/products/scim-for-aspnet" } , new ScimServiceProviderConfigOptions()
+               // LicenseKey = "Get a license key form https://www.identityserver.com/products/scim-for-aspnet"
+               LicenseKey = "eyJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjQtMDctMDJUMDA6MDA6MDAiLCJpYXQiOiIyMDI0LTA2LTAyVDAyOjQyOjMwIiwib3JnIjoiREVNTyIsImF1ZCI6OH0=.o/S9f5jFF6Q8DhBTfZ5nTzbwu/j63UZ+qzYdEW/43psP+MXd5DXqVbeze8SQFuDlMyieI9+isdAMIVNP3jLvcYQjCFLvT7EUXRBWu3grQRDRePnxz5hmHezdbdIEMSRxTdCnVPIh2+jG5fcOVbZSc1pOx3LxYIn+cd6PT3UT7NcDgVHFt12Z5KZg66z7rJ9uZSWBcCJujJKh3NFTctelSny3jG4qAFEYVJkVny9K3i6H4FpLFraC9zcZe6+fsbho4AViogQ+06KfDB/k8QGuiavzapSum0b/TH1zRpfGT3hK2RLYqA71UvAykxkXVHRLOeapT78Hz7RIU61zqQNwgmPLxkWU8Ice/NdCSGSN67DMs2OW6jRITjYLzbfcMBV/2DIeCaJOCtdoQa6HrwAQwGO9zNnFjQ57LmIrNesmMCxyQ5WApZOiAoOwRdzpoXPUallsHHCNUrGh4sol1o2ucFHah3rFwPIPpLo01cqnZklB6KHB+tkhywVvcoQk2/NoMfumRO2uai9KKsJrgr37hxiYBcqMTLahgd1POGnX2cbas16vKDXl2HtnM9Pe7apWaZMAYXNSYu3/rDiNouw6r3PvkrMNiecmblLs0lbO2zD8MY+X5GIEIa1TsH0izB5HT/Eb0La8eAgGqtEIbjlnhT+/zkGbJb1XxHiZYhc45P0="
+            }, new ScimServiceProviderConfigOptions()
             {
                 FilteringSupported = false,
                 SortingSupported = true,
                 PatchSupported = true,
-             //  IgnoreMissingExtensionSchemas = true
+                //  IgnoreMissingExtensionSchemas = true
             })
         .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
         .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
-     //   .AddResourceExtension<User,Employment>("urn:ietf:params:scim:schemas:extension:employment:2.0:User")
+        //   .AddResourceExtension<User,Employment>("urn:ietf:params:scim:schemas:extension:employment:2.0:User")
         .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
         .AddFilterPropertyExpressionCompiler()
+        .AddPathBasedTenancy()
         .MapScimAttributes<AppUser>(ScimSchemas.User, mapper =>
         {
             mapper

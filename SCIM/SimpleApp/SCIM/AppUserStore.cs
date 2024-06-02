@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Exceptions;
 using Rsk.AspNetCore.Scim.Filters;
+using Rsk.AspNetCore.Scim.Hosting.Tenancy;
 using Rsk.AspNetCore.Scim.Models;
 using Rsk.AspNetCore.Scim.Stores;
 using SimpleApp.Services;
@@ -11,25 +12,41 @@ namespace SimpleApp.SCIM;
 public class AppUserStore : IScimStore<User>
 {
     private readonly AppDbContext ctx;
+    private readonly ITenancyAccessor tenancyAccessor;
     private readonly IScimQueryBuilderFactory queryBuilderFactory;
 
     public AppUserStore(
         AppDbContext ctx,
+        ITenancyAccessor tenancyAccessor,
         IScimQueryBuilderFactory queryBuilderFactory
         )
     {
         this.ctx = ctx;
+        this.tenancyAccessor = tenancyAccessor;
         this.queryBuilderFactory = queryBuilderFactory;
+    }
+
+    private IQueryable<AppUser> BaseQuery
+    {
+        get
+        {
+            string? tenancy = tenancyAccessor.Tenancy;
+            
+            return tenancy == null ? ctx.Users : ctx.Users.Where(u => u.Tenancy == tenancy);
+        }
     }
 
     public async Task<IEnumerable<string>> Exists(IEnumerable<string> ids)
     {
-        return await ctx.Users.Select(u => u.Id).Intersect(ids).ToListAsync();
+        return await BaseQuery.Select(u => u.Id).Intersect(ids).ToListAsync();
     }
 
     public async Task<User> Add(User resource)
     {
-        var user = MapScimUserToAppUser(resource, new AppUser());
+        var user = MapScimUserToAppUser(resource, new AppUser()
+        {
+            Tenancy = tenancyAccessor.Tenancy
+        });
 
         await ctx.Users.AddAsync(user);
         await ctx.SaveChangesAsync();
@@ -46,7 +63,7 @@ public class AppUserStore : IScimStore<User>
 
     private async Task<AppUser> FindUser(string id)
     {
-        AppUser? user = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
+        AppUser? user = await BaseQuery.SingleOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
         {
@@ -64,7 +81,7 @@ public class AppUserStore : IScimStore<User>
         }
         
         IQueryable<AppUser> databaseQuery =
-        queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
+        queryBuilderFactory.CreateQueryBuilder<AppUser>(BaseQuery)
             .Filter(query.Filter)
             .Build();
 
@@ -166,6 +183,7 @@ public class AppUserStore : IScimStore<User>
     
     private static AppUser MapScimUserToAppUser(User resource, AppUser user)
     {
+        
         string? primaryEmail = resource
             .Emails?
             .SingleOrDefault(e => e.Primary == true)
@@ -178,7 +196,7 @@ public class AppUserStore : IScimStore<User>
 
         resource.Extensions.TryGetValue(ScimSchemas.EnterpriseUser, out ResourceExtension? resExt);
         var enterpriseUser = resExt as EnterpriseUser;
-
+        
         user.Username = primaryEmail ?? user.Username;
         user.Locale = resource.Locale ?? user.Locale;
         user.FirstName = resource.Name?.GivenName ?? user.FirstName;

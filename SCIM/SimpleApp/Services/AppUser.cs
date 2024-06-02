@@ -13,7 +13,7 @@ public class AppUser
         Id = id;
     }
     
-    
+    public string? Tenancy { get; init; }
     public string Id { get;  }
     public string? Username { get; set; }
     public string? Locale { get; set; }
