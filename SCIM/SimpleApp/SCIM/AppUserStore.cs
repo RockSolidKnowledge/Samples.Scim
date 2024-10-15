@@ -36,7 +36,7 @@ public class AppUserStore : IScimStore<User>
 
         return MapAppUserToScimUser(user);
     }
-   
+
     public async Task<User> GetById(string id, ResourceAttributeSet attributes)
     {
         var user = await FindUser(id);
@@ -55,18 +55,18 @@ public class AppUserStore : IScimStore<User>
 
         return user;
     }
-    
-    public async Task<ScimPageResults<User>> GetAll(IResourceQuery query)
+
+    public async Task<ScimPageResults<User>> GetAll(IIndexResourceQuery query)
     {
         if (query.Filter.IsExternalIdEqualityExpression(out string? id))
         {
             return new ScimPageResults<User>(Enumerable.Empty<User>(), 0);
         }
-        
+
         IQueryable<AppUser> databaseQuery =
-        queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
-            .Filter(query.Filter)
-            .Build();
+            queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
+                .Filter(query.Filter)
+                .Build();
 
         IQueryable<AppUser> pageQuery = queryBuilderFactory.CreateQueryBuilder<AppUser>(databaseQuery)
             .Page(query.StartIndex, query.Count)
@@ -81,6 +81,51 @@ public class AppUserStore : IScimStore<User>
             .ToListAsync();
 
         return new ScimPageResults<User>(matchingUsers, totalCount);
+    }
+
+    public async Task<ScimCursorPageResults<User>> GetAll(ICursorResourceQuery query)
+    {
+        if (!string.IsNullOrWhiteSpace(query.Cursor) && !Guid.TryParse(query.Cursor, out _))
+        {
+            throw new ScimStoreUnrecognizedCursorException("Cursor is not a valid GUID");
+        }
+
+        IQueryable<AppUser> sortedSet = ctx.Users.OrderBy(u => u.Id);
+
+        IQueryable<AppUser> databaseQuery =
+            queryBuilderFactory.CreateQueryBuilder(sortedSet)
+                .Filter(query.Filter)
+                .Build();
+
+        IQueryable<AppUser> skipQuery = databaseQuery;
+
+        if (!string.IsNullOrWhiteSpace(query.Cursor))
+        {
+            skipQuery = skipQuery.Where(q => string.Compare(q.Id, query.Cursor) > 0);
+        }
+
+        int totalCount = await databaseQuery.CountAsync();
+
+        string? nextCursor = query.Count == int.MaxValue ? null :
+            await skipQuery
+                .Skip(query.Count + 1)
+                .Take(1)
+                .Select(sq => sq.Id)
+                .FirstOrDefaultAsync();
+
+        IQueryable<AppUser> pageQuery = queryBuilderFactory.CreateQueryBuilder(skipQuery)
+            .Sort(query.Sort.By, query.Sort.Direction)
+            .Build();
+
+        var matchingUsers = await pageQuery
+            .Take(query.Count)
+            .AsAsyncEnumerable()
+            .Select(MapAppUserToScimUser)
+            .ToListAsync();
+
+        string? previousCursor = string.IsNullOrWhiteSpace(query.Cursor) ? null : query.Cursor;
+
+        return new ScimCursorPageResults<User>(matchingUsers, totalCount, nextCursor, previousCursor);
     }
 
     public async Task<User> Update(User resource)
@@ -102,13 +147,14 @@ public class AppUserStore : IScimStore<User>
                 Name? name = value as Name;
                 source.FirstName = name?.GivenName;
                 source.LastName = name?.FamilyName;
-            },   
+            },
             [$"{ScimSchemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
             [$"{ScimSchemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
             [$"{ScimSchemas.User}:active"] = (source, value) => source.IsDisabled = !(bool)value,
             [$"{ScimSchemas.User}:locale"] = (source, value) => source.Locale = (string)value,
             [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
         };
+
 
     public async Task<User?> PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
     {
@@ -118,7 +164,7 @@ public class AppUserStore : IScimStore<User>
         {
             throw new ScimStoreException("Only Replace patch command supported for Users");
         }
-       
+
         foreach (PatchCommand replaceCmd in updates)
         {
             if (replaceCmd.Path != null)
@@ -138,7 +184,7 @@ public class AppUserStore : IScimStore<User>
 
         return null;
     }
-    
+
     private static User MapAppUserToScimUser(AppUser user)
     {
         return new User()
@@ -163,7 +209,7 @@ public class AppUserStore : IScimStore<User>
             }
         };
     }
-    
+
     private static AppUser MapScimUserToAppUser(User resource, AppUser user)
     {
         string? primaryEmail = resource
@@ -186,14 +232,14 @@ public class AppUserStore : IScimStore<User>
         user.Department = enterpriseUser?.Department ?? user.Department;
         user.NormalizedUsername = user.Username?.ToUpper();
 
-        user.IsDisabled = !resource?.Active  ?? user.IsDisabled ;
+        user.IsDisabled = !resource?.Active ?? user.IsDisabled;
         return user;
     }
 
     private static void PatchFullUser(PatchCommand replaceCmd, AppUser user)
     {
         var source = (User)replaceCmd.Value;
-        
+
         MapScimUserToAppUser(source, user);
     }
 

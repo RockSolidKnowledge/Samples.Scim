@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseInMemoryDatabase("Application");
+    options.UseSqlite("Data Source=app.db");
 });
 
 var scimServiceProviderBuilder =
@@ -26,7 +26,8 @@ var scimServiceProviderBuilder =
                 FilteringSupported = false,
                 SortingSupported = true,
                 PatchSupported = true,
-             //  IgnoreMissingExtensionSchemas = true
+                EnableAzureAdCompatibility = true,
+                PaginationOptions = new PaginationOptions(true, true, PaginationMethod.Cursor)
             })
         .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
         .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
@@ -42,11 +43,6 @@ var scimServiceProviderBuilder =
                 .Map("name.givenName", u => u.FirstName)
                 .Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse)
                 .Map("locale", u => u.Locale);
-        })
-        .MapScimAttributes<AppUser>(ScimSchemas.EnterpriseUser, mapper =>
-        {
-            mapper
-                .Map("department", u => u.Department);
         })
         .MapScimAttributes<AppRole>(ScimSchemas.Group, mapper =>
         {
@@ -74,6 +70,16 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+string? seed = builder.Configuration["SeedDatabase"];
+
+if (bool.TryParse(seed, out bool seedDatabase) && seedDatabase)
+{
+    using var scope = app.Services.CreateScope();
+    AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    DatabaseInitializer.Initialize(context);
+}
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

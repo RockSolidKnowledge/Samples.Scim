@@ -34,7 +34,7 @@ public class AppRoleStore : IScimStore<Group>
         await ctx.Roles.AddAsync(role);
 
         await ctx.SaveChangesAsync();
-        
+
         return MapAppRoleToScimGroup(role);
     }
 
@@ -53,7 +53,7 @@ public class AppRoleStore : IScimStore<Group>
             }).ToList()
         };
     }
-    
+
     private void MapScimGroupToAppRole(Group resource, AppRole appRole)
     {
         appRole.Name = resource.DisplayName ?? appRole.Name;
@@ -71,14 +71,14 @@ public class AppRoleStore : IScimStore<Group>
         }
     }
 
-  
+
 
     public async Task<Group> GetById(string id, ResourceAttributeSet attributeSet)
     {
         IQueryable<AppRole> source = ctx.Roles;
 
         var includeMembers = IncludeMembers(attributeSet);
-                               
+
         source = includeMembers ? source.Include(ar => ar.Members) : source;
 
         AppRole role = await FindRole(source, id);
@@ -92,24 +92,24 @@ public class AppRoleStore : IScimStore<Group>
         return attributeSet.IsInSet(groupMembers);
     }
 
-    public async Task<ScimPageResults<Group>> GetAll(IResourceQuery query)
+    public async Task<ScimPageResults<Group>> GetAll(IIndexResourceQuery query)
     {
         IQueryable<AppRole> source = ctx.Roles;
 
         var includeMembers = IncludeMembers(query.AttributeSet);
-        
+
         source = includeMembers ? source.Include(ar => ar.Members) : source;
-        
-        IQueryable<AppRole> databaseQuery = 
+
+        IQueryable<AppRole> databaseQuery =
             queryBuilderFactory.CreateQueryBuilder<AppRole>(source)
                 .Filter(query.Filter)
                 .Build();
-            
+
         IQueryable<AppRole> pageQuery = queryBuilderFactory.CreateQueryBuilder<AppRole>(databaseQuery)
             .Page(query.StartIndex, query.Count)
             .Sort(query.Sort.By, query.Sort.Direction)
             .Build();
-        
+
         int totalCount = await databaseQuery.CountAsync();
 
         var matchingGroups = await pageQuery
@@ -120,11 +120,61 @@ public class AppRoleStore : IScimStore<Group>
         return new ScimPageResults<Group>(matchingGroups, totalCount);
     }
 
+    public async Task<ScimPageResults<Group>> GetAll(ICursorResourceQuery query)
+    {
+        if (!string.IsNullOrWhiteSpace(query.Cursor) && !Guid.TryParse(query.Cursor, out _))
+        {
+            throw new ScimStoreUnrecognizedCursorException("Cursor is not a valid GUID");
+        }
+
+        IQueryable<AppRole> sortedSet = ctx.Roles.OrderBy(u => u.Id);
+
+        var includeMembers = IncludeMembers(query.AttributeSet);
+
+        sortedSet = includeMembers ? sortedSet.Include(ar => ar.Members) : sortedSet;
+
+        IQueryable<AppRole> databaseQuery =
+            queryBuilderFactory.CreateQueryBuilder(sortedSet)
+                .Filter(query.Filter)
+                .Build();
+
+        IQueryable<AppRole> skipQuery = databaseQuery;
+
+        if (!string.IsNullOrWhiteSpace(query.Cursor))
+        {
+            skipQuery = skipQuery.Where(q => string.Compare(q.Id, query.Cursor) > 0);
+        }
+
+        int totalCount = await databaseQuery.CountAsync();
+
+        string? nextCursor = query.Count == int.MaxValue
+            ? null
+            : await skipQuery
+                .Skip(query.Count + 1)
+                .Take(1)
+                .Select(sq => sq.Id)
+                .FirstOrDefaultAsync();
+
+        IQueryable<AppRole> pageQuery = queryBuilderFactory.CreateQueryBuilder(skipQuery)
+            .Sort(query.Sort.By, query.Sort.Direction)
+            .Build();
+
+        var matchingUsers = await pageQuery
+            .Take(query.Count)
+            .AsAsyncEnumerable()
+            .Select(MapAppRoleToScimGroup)
+            .ToListAsync();
+
+        string? previousCursor = string.IsNullOrWhiteSpace(query.Cursor) ? null : query.Cursor;
+
+        return new ScimCursorPageResults<Group>(matchingUsers, totalCount, nextCursor, previousCursor);
+    }
+
     public async Task<Group> Update(Group resource)
     {
         var role = await FindRole( ctx.Roles.Include(r=>r.Members), resource.Id);
         role.Members.Clear();
-        
+
         MapScimGroupToAppRole(resource,role);
 
         await ctx.SaveChangesAsync();
@@ -146,7 +196,7 @@ public class AppRoleStore : IScimStore<Group>
 
     private static readonly AttributePathExpression groupMembers = new AttributePathExpression(ScimSchemas.Group, "members");
     private static readonly AttributePathExpression displayName = new AttributePathExpression(ScimSchemas.Group, "displayName");
-    
+
     private static readonly PathExpression groupPathExpression = new PathExpression(groupMembers);
     private static readonly PathExpression displayNameExpression = new PathExpression(displayName);
 
@@ -156,7 +206,7 @@ public class AppRoleStore : IScimStore<Group>
 
         foreach (PatchCommand update in updates)
         {
-            // Replace entire group 
+            // Replace entire group
             if (update.Path == null && update.Operation == PatchOperation.Replace)
             {
                 MapScimGroupToAppRole((Group)update.Value, role);
@@ -173,14 +223,14 @@ public class AppRoleStore : IScimStore<Group>
                      (filter.PathElements[0] == "members") )
             {
                 var source = ctx.UserRoles.Where(r => r.AppRoleId== resourceId);
-                IQueryable<AppUserRole> databaseQuery = 
+                IQueryable<AppUserRole> databaseQuery =
                     queryBuilderFactory.CreateQueryBuilder<AppUserRole>(source)
                         .Filter(filter.ValueFilter)
                         .Build();
 
                 // Find all members that match
                 var toRemove = await databaseQuery.ToListAsync();
-                
+
                 ctx.RemoveRange(toRemove);
             }
             else if ( update.Operation == PatchOperation.Replace &&
@@ -213,7 +263,7 @@ public class AppRoleStore : IScimStore<Group>
         var user = ctx.Users.Single(u => u.Id == userId);
         role.Members.Add(user);
     }
-    
+
     private void RemoveUserFromRole(AppRole role, string userId)
     {
         var user = ctx.Users.Single(u => u.Id == userId);
@@ -228,11 +278,11 @@ public class AppRoleStore : IScimStore<Group>
         {
             throw new ScimStoreItemAlreadyExistException($"Can not find group with id {id}");
         }
-        
+
         ctx.Roles.Remove(role);
         await ctx.SaveChangesAsync();
     }
-    
+
     private async Task<AppRole> FindRoleNoMembers(string id)
     {
         AppRole? role = await ctx.Roles.SingleOrDefaultAsync(u => u.Id == id);
