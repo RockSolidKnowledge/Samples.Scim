@@ -120,7 +120,7 @@ public class AppRoleStore : IScimStore<Group>
         return new ScimPageResults<Group>(matchingGroups, totalCount);
     }
 
-    public async Task<ScimPageResults<Group>> GetAll(ICursorResourceQuery query)
+    public async Task<ScimCursorPageResults<Group>> GetAll(ICursorResourceQuery query)
     {
         if (!string.IsNullOrWhiteSpace(query.Cursor) && !Guid.TryParse(query.Cursor, out _))
         {
