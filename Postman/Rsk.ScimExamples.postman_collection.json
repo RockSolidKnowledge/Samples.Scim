@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "03c512d9-6c39-4880-ae2c-ba6be4533001",
+		"_postman_id": "a582c7e3-f5ee-437a-80fd-536047cd5ecc",
 		"name": "Rsk.ScimExamples",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -87,7 +87,7 @@
 					],
 					"path": [
 						"users",
-						""
+						"{{User_Id}}"
 					]
 				}
 			},
@@ -360,6 +360,88 @@
 						{
 							"key": "sortOrder",
 							"value": "ascending"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users - Index Pagination",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"user-agent": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users?sortBy=userName&sortOrder=ascending&startIndex=1&count=10",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "userName"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ascending"
+						},
+						{
+							"key": "startIndex",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users - Cursor Pagination",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"user-agent": true
+				}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SCIM_Path_Local}}/users?sortBy=userName&sortOrder=ascending&cursor=&count=10",
+					"host": [
+						"{{SCIM_Path_Local}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "userName"
+						},
+						{
+							"key": "sortOrder",
+							"value": "ascending"
+						},
+						{
+							"key": "cursor",
+							"value": ""
+						},
+						{
+							"key": "count",
+							"value": "10"
 						}
 					]
 				}

@@ -71,15 +71,9 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-string? seed = builder.Configuration["SeedDatabase"];
-
-if (bool.TryParse(seed, out bool seedDatabase) && seedDatabase)
-{
-    using var scope = app.Services.CreateScope();
-    AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    DatabaseInitializer.Initialize(context);
-}
-
+using var scope = app.Services.CreateScope();
+AppDbContext context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+DatabaseInitializer.Initialize(context);
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
