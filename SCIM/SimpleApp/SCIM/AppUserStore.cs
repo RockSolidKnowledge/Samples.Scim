@@ -30,9 +30,15 @@ public class AppUserStore : IScimStore<User>
     public async Task<User> Add(User resource)
     {
         var user = MapScimUserToAppUser(resource, new AppUser());
-
         await ctx.Users.AddAsync(user);
-        await ctx.SaveChangesAsync();
+        try
+        {
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            throw new ScimStoreItemAlreadyExistException($"User with userName: {resource.UserName} already exists");
+        }
 
         return MapAppUserToScimUser(user);
     }
@@ -46,7 +52,9 @@ public class AppUserStore : IScimStore<User>
 
     private async Task<AppUser> FindUser(string id)
     {
-        AppUser? user = await ctx.Users.SingleOrDefaultAsync(u => u.Id == id);
+        AppUser? user = await ctx.Users
+            .Include(u => u.Phones)
+            .SingleOrDefaultAsync(u => u.Id == id);
 
         if (user == null)
         {
@@ -63,8 +71,13 @@ public class AppUserStore : IScimStore<User>
             return new ScimPageResults<User>(Enumerable.Empty<User>(), 0);
         }
 
+        IQueryable<AppUser> baseQuery = ctx.Users
+            .Include(u => u.Address)
+            .Include(u => u.Phones)
+            .Include(u => u.Roles);
+
         IQueryable<AppUser> databaseQuery =
-            queryBuilderFactory.CreateQueryBuilder<AppUser>(ctx.Users)
+            queryBuilderFactory.CreateQueryBuilder<AppUser>(baseQuery)
                 .Filter(query.Filter)
                 .Build();
 
@@ -90,7 +103,11 @@ public class AppUserStore : IScimStore<User>
             throw new ScimStoreUnrecognizedCursorException("Cursor is not a valid GUID");
         }
 
-        IQueryable<AppUser> sortedSet = ctx.Users.OrderBy(u => u.Id);
+        IQueryable<AppUser> sortedSet = ctx.Users
+            .Include(u => u.Address)
+            .Include(u => u.Phones)
+            .Include(u => u.Roles)
+            .OrderBy(u => u.Id);
 
         IQueryable<AppUser> databaseQuery =
             queryBuilderFactory.CreateQueryBuilder(sortedSet)
@@ -139,7 +156,7 @@ public class AppUserStore : IScimStore<User>
         return MapAppUserToScimUser(user);
     }
 
-    private Dictionary<string, Action<AppUser, object>> replaceMethods =
+    private Dictionary<string, Action<AppUser, object>> patchingMethods =
         new()
         {
             [$"{ScimSchemas.User}:name"] = (source, value) =>
@@ -147,36 +164,92 @@ public class AppUserStore : IScimStore<User>
                 Name? name = value as Name;
                 source.FirstName = name?.GivenName;
                 source.LastName = name?.FamilyName;
+                source.Formatted = name?.Formatted;
+                source.MiddleName = name?.MiddleName;
+                source.HonorificSuffix = name?.HonorificSuffix;
+                source.HonorificPrefix = name?.HonorificPrefix;
             },
+            [$"{ScimSchemas.User}:displayName"] = (source, value) => source.DisplayName = (string)value,
+            [$"{ScimSchemas.User}:title"] = (source, value) => source.Title = (string)value,
+            [$"{ScimSchemas.User}:preferredLanguage"] = (source, value) => source.PreferredLanguage = (string)value,
+            [$"{ScimSchemas.User}:userType"] = (source, value) => source.UserType = (string)value,
+            [$"{ScimSchemas.User}:userName"] = (source, value) => source.Username = (string)value,
+            [$"{ScimSchemas.User}:nickName"] = (source, value) => source.Nickname = (string)value,
+            [$"{ScimSchemas.User}:timezone"] = (source, value) => source.Timezone = (string)value,
+            [$"{ScimSchemas.User}:profileUrl"] = (source, value) => source.ProfileUrl = (string)value,
             [$"{ScimSchemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
             [$"{ScimSchemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
+            [$"{ScimSchemas.User}:name.formatted"] = (source, value) => source.Formatted = (string)value,
+            [$"{ScimSchemas.User}:name.middleName"] = (source, value) => source.MiddleName = (string)value,
+            [$"{ScimSchemas.User}:name.honorificPrefix"] = (source, value) => source.HonorificPrefix = (string)value,
+            [$"{ScimSchemas.User}:name.honorificSuffix"] = (source, value) => source.HonorificSuffix = (string)value,
             [$"{ScimSchemas.User}:active"] = (source, value) => source.IsDisabled = !(bool)value,
             [$"{ScimSchemas.User}:locale"] = (source, value) => source.Locale = (string)value,
             [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
-        };
-
+            [$"{ScimSchemas.EnterpriseUser}:employeeNumber"] = (source, value) => source.EmployeeNumber = (string)value,
+            [$"{ScimSchemas.EnterpriseUser}:organization"] = (source, value) => source.Organization = (string)value,
+            [$"{ScimSchemas.EnterpriseUser}:division"] = (source, value) => source.Division = (string)value,
+            [$"{ScimSchemas.EnterpriseUser}:costCenter"] = (source, value) => source.CostCenter = (string)value,
+    //     };
+    //
+    // [$"{ScimSchemas.User}:emails[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:value"] = (source, value) => source.Email = (string)value,
+    //
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:formatted"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.Formatted = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:streetAddress"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.StreetAddress = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:locality"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.Locality = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:region"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.Region = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:postalCode"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.PostalCode = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:country"] = (source, value) =>
+    //         {
+    //             source.Address ??= new AppAddress();
+    //             source.Address.Country = (string)value;
+    //         },
+    //
+    //         [$"{ScimSchemas.User}:phoneNumbers[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:value"] = (source, value) =>
+    //         {
+    //             if(!source.Phones.Any()) source.Phones.Add(new AppPhoneNumber());
+    //             source.Phones.First().Value = (string)value;
+    //         },
+    //         [$"{ScimSchemas.User}:phoneNumbers[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:primary"] = (source, value) =>
+    //         {
+    //             if(!source.Phones.Any()) source.Phones.Add(new AppPhoneNumber());
+    //             source.Phones.First().Primary = (bool)value;
+    //         },
 
     public async Task<User?> PartialUpdate(string resourceId, IEnumerable<PatchCommand> updates)
     {
         AppUser user = await FindUser(resourceId);
 
-        if (!updates.All(pc => pc.Operation == PatchOperation.Replace))
+        if (updates.All(pc => pc.Operation == PatchOperation.Remove))
         {
             throw new ScimStoreException("Only Replace patch command supported for Users");
         }
 
-        foreach (PatchCommand replaceCmd in updates)
+        foreach (PatchCommand replaceCmd in updates.Where(u => u.Operation != PatchOperation.Remove))
         {
-            if (replaceCmd.Path != null)
+            if (patchingMethods.TryGetValue(replaceCmd.Path.ToString(), out Action<AppUser, object>? replaceAction))
             {
-                if (replaceMethods.TryGetValue(replaceCmd.Path.ToString(), out Action<AppUser, object>? replaceAction))
-                {
-                    replaceAction!(user, replaceCmd.Value);
-                }
-            }
-            else
-            {
-                PatchFullUser(replaceCmd, user);
+                replaceAction!(user, replaceCmd.Value);
             }
         }
 
@@ -192,22 +265,70 @@ public class AppUserStore : IScimStore<User>
             Id = user.Id.ToString(),
             UserName = user.Username,
             Active = !user.IsDisabled,
+            DisplayName = user.DisplayName,
+            NickName = user.Nickname,
+            ProfileUrl = user.ProfileUrl,
+            Title = user.Title,
+            Timezone = user.Timezone,
+            PreferredLanguage = user.PreferredLanguage,
+            UserType = user.UserType,
+            Addresses = MapAppAddressToAddress(user),
             Emails = new Email[]
             {
-                new Email() { Display = $"{user.FirstName} {user.LastName}", Primary = true, Value = user.Username }
+                new Email() { Display = $"{user.FirstName} {user.LastName}", Primary = true, Value = user.Email, Type = "work"}
             },
+            PhoneNumbers = MapAppPhonenumbersToPhoneNumers(user),
             Locale = user.Locale,
             Name = new Name()
             {
-                Formatted = $"{user.FirstName} {user.LastName}",
+                Formatted = user.Formatted,
                 FamilyName = user.LastName,
                 GivenName = user.FirstName,
+                MiddleName = user.MiddleName,
+                HonorificSuffix = user.HonorificSuffix,
+                HonorificPrefix = user.HonorificPrefix
             },
             Extensions = new Dictionary<string, ResourceExtension>()
             {
-                [ScimSchemas.EnterpriseUser] = new EnterpriseUser() { Department = user.Department }
+                [ScimSchemas.EnterpriseUser] = new EnterpriseUser()
+                {
+                    Department = user.Department,
+                    EmployeeNumber = user.EmployeeNumber,
+                    Organization = user.Organization,
+                    Division = user.Division,
+                    CostCenter = user.CostCenter
+                }
             }
         };
+    }
+
+    private static IEnumerable<Address> MapAppAddressToAddress(AppUser user)
+    {
+        return user.Address != null
+            ? [ new Address
+                {
+                    Formatted = user.Address.Formatted,
+                    Primary = true,
+                    Type = "work",
+                    StreetAddress = user.Address.StreetAddress,
+                    Locality = user.Address.Locality,
+                    Region = user.Address.Region,
+                    PostalCode = user.Address.PostalCode,
+                    Country = user.Address.Country
+                }
+            ]
+            : [];
+    }
+
+    private static IEnumerable<PhoneNumber> MapAppPhonenumbersToPhoneNumers(AppUser user)
+    {
+        return user.Phones == null ? [] :
+            user.Phones.Select(p => new PhoneNumber
+            {
+                Primary = p.Primary,
+                Type = p.Type,
+                Value = p.Value
+            });
     }
 
     private static AppUser MapScimUserToAppUser(User resource, AppUser user)
@@ -225,15 +346,75 @@ public class AppUserStore : IScimStore<User>
         resource.Extensions.TryGetValue(ScimSchemas.EnterpriseUser, out ResourceExtension? resExt);
         var enterpriseUser = resExt as EnterpriseUser;
 
-        user.Username = primaryEmail ?? user.Username;
+        user.Username = resource.UserName ?? primaryEmail;
         user.Locale = resource.Locale ?? user.Locale;
         user.FirstName = resource.Name?.GivenName ?? user.FirstName;
         user.LastName = resource.Name?.FamilyName ?? user.LastName;
         user.Department = enterpriseUser?.Department ?? user.Department;
         user.NormalizedUsername = user.Username?.ToUpper();
+        user.Nickname = resource.NickName ?? user.Nickname;
+        user.Title = resource.Title ?? user.Title;
+        user.DisplayName = resource.DisplayName ?? user.DisplayName;
+        user.Timezone = resource.Timezone ?? user.Timezone;
+        user.ProfileUrl = resource.ProfileUrl ?? user.ProfileUrl;
+        user.Formatted = resource.Name?.Formatted ?? user.Formatted;
+        user.MiddleName = resource.Name?.MiddleName ?? user.MiddleName;
+        user.HonorificSuffix = resource.Name?.HonorificSuffix ?? user.HonorificSuffix;
+        user.HonorificPrefix = resource.Name?.HonorificPrefix ?? user.HonorificPrefix;
+        user.IsDisabled = !resource.Active ?? user.IsDisabled;
+        user.PreferredLanguage = resource.PreferredLanguage ?? user.PreferredLanguage;
+        user.Email = primaryEmail;
+        user.EmployeeNumber = enterpriseUser?.EmployeeNumber ?? user.EmployeeNumber;
+        user.Organization = enterpriseUser?.Organization ?? user.Organization;
+        user.Division = enterpriseUser?.Division ?? user.Division;
+        user.CostCenter = enterpriseUser?.CostCenter ?? user.CostCenter;
+        user.UserType = resource.UserType;
 
-        user.IsDisabled = !resource?.Active ?? user.IsDisabled;
+        MapAddressToAppAddress(resource, user);
+        MapPhoneNumbersToAppPhoneNumbers(resource, user);
+        MapRolesToAppRoles(resource, user);
         return user;
+    }
+
+    private static void MapRolesToAppRoles(User resource, AppUser user)
+    {
+        if (resource.Roles != null)
+        {
+            user.Roles = resource.Roles.Select(r => new AppRole
+            {
+                Name = r.Value
+            }).ToList();
+        }
+    }
+
+    private static void MapPhoneNumbersToAppPhoneNumbers(User resource, AppUser user)
+    {
+        if (resource.PhoneNumbers != null)
+        {
+            user.Phones = resource.PhoneNumbers.Select(p => new AppPhoneNumber
+            {
+                Primary = p.Primary,
+                Type = p.Type,
+                Value = p.Value
+            }).ToList();
+        }
+    }
+
+    private static void MapAddressToAppAddress(User resource, AppUser user)
+    {
+        if (resource.Addresses != null)
+        {
+            var address = resource.Addresses.First();
+            user.Address = new AppAddress
+            {
+                Formatted = address.Formatted,
+                StreetAddress = address.StreetAddress,
+                Locality = address.Locality,
+                Region = address.Region,
+                PostalCode = address.PostalCode,
+                Country = address.Country
+            };
+        }
     }
 
     private static void PatchFullUser(PatchCommand replaceCmd, AppUser user)
@@ -247,7 +428,7 @@ public class AppUserStore : IScimStore<User>
     {
         AppUser user = await FindUser(id);
 
-        ctx.Users.Remove(user);
+        user.IsDisabled = true;
 
         await ctx.SaveChangesAsync();
     }
