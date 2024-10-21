@@ -18,5 +18,9 @@
         <Folder Include="Pages"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="app.db-shm" />
+    </ItemGroup>
+
 
 </Project>

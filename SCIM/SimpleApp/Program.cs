@@ -27,7 +27,7 @@ var scimServiceProviderBuilder =
                 SortingSupported = true,
                 PatchSupported = true,
                 EnableAzureAdCompatibility = true,
-                PaginationOptions = new PaginationOptions(true, true, PaginationMethod.Cursor)
+                PaginationOptions = new PaginationOptions(true, true, PaginationMethod.Index)
             })
         .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
         .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
