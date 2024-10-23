@@ -1,8 +1,10 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Exceptions;
 using Rsk.AspNetCore.Scim.Filters;
 using Rsk.AspNetCore.Scim.Models;
+using Rsk.AspNetCore.Scim.Parsers;
 using Rsk.AspNetCore.Scim.Stores;
 using SimpleApp.Services;
 
@@ -309,9 +311,9 @@ public class AppUserStore : IScimStore<User>
 
     private static User MapAppUserToScimUser(AppUser user)
     {
-        return new User()
+        return new User
         {
-            Id = user.Id.ToString(),
+            Id = user.Id,
             UserName = user.Username,
             Active = !user.IsDisabled,
             DisplayName = user.DisplayName,
@@ -322,10 +324,9 @@ public class AppUserStore : IScimStore<User>
             PreferredLanguage = user.PreferredLanguage,
             UserType = user.UserType,
             Addresses = MapAppAddressToAddress(user),
-            Emails = new Email[]
-            {
-                new Email() { Display = $"{user.FirstName} {user.LastName}", Primary = true, Value = user.Email, Type = "work"}
-            },
+            Emails = [
+                new Email() { Display = $"{user.FirstName} {user.LastName}", Primary = true, Value = user.Email, Type = "work" }
+            ],
             PhoneNumbers = MapAppPhonenumbersToPhoneNumers(user),
             Locale = user.Locale,
             Name = new Name()
