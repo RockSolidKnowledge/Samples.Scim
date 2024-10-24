@@ -21,7 +21,7 @@ var scimServiceProviderBuilder =
             new ScimLicensingOptions()
             {
                 Licensee = "DEMO",
-                LicenseKey = "eyJhdXRoIjoiREVNTyIsImV4cCI6IjIwMjQtMTEtMDdUMDE6MDA6MDIuNjgwMTM3KzAwOjAwIiwiaWF0IjoiMjAyNC0xMC0wOFQwMTowMDowMiIsIm9yZyI6IkRFTU8iLCJhdWQiOjh9.kI9JxoIPs1k5gbBj03grrDpdS9q9jssUKAAFsPthHODPYl6Hwf0OLX8Y+W4Iy3gXf0cvuSsyB7eH38VHjuHkt1X1U2MWFp67IP0IgrPWlJTSDxU0f9lzzWFKucV1kKeMNnUM9IPbHfOHaU3kAbpJcX24rkNbJXz0J9vNJlRFE/luLq4b1okob9qszN6hKKpV7nbThlRYzLnSKObwEag4P2fBMAzGrkWwsNjJpF4u9+1wYfqacIThPmta33ebfXMZUj7EOexD9wuSTgXkEA/qfv5Ix0E7ukDvoqJUQzAPqvMw6DARj6Kpy/gVbIloMN0kMmeGsdVE+mqgDTzTqxJhIElUt+RCNZ0W6wQIfNbJyksYK3gjHIMzUHGV4RYtWa2q9NOB5DF+Pp7k+FkkznroeIqWmaF8Dbp6AAbMDgGfXyjM2pJzdL7pHyb1FFOZl4t2pCZmF1xOmDyGvoRSiCf0I/VyD+HfK9oGEjitZS9blBxX1K82gDBHrnuhaDntP0C+g65Vb5Wv8ZdgjFJne/CzdsXiBWvswA/UKIJGqfM/76mn5r3vcgV2tYsu3a9iGtveTOJ9v53maX6NWJYyiiWRtwaG0usTpUvlt80K8ccHf4gW3ktVc9OLpfZPyD8/nA+T27Jepu80v3PjMx1Sy+tgOWFV6Xqdh1QSY8RCGfVUgrI=" } , new ScimServiceProviderConfigOptions()
+                LicenseKey = "Get a license key form https://www.identityserver.com/products/scim-for-aspnet" } , new ScimServiceProviderConfigOptions()
             {
                 FilteringSupported = false,
                 SortingSupported = true,
@@ -59,8 +59,31 @@ var scimServiceProviderBuilder =
         })
         .MapPatchingOperations<AppUser>(ScimSchemas.User, mapBuilder =>
         {
-            mapBuilder.Map("userName", u => u.Username);
-            mapBuilder.Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse);
+            mapBuilder.Map("userName", u => u.Username)
+                .Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse)
+                .Map("displayName", u => u.DisplayName)
+                .Map("title", u => u.Title)
+                .Map("preferredLanguage", u => u.PreferredLanguage)
+                .Map("userType", u => u.UserType)
+                .Map("nickName", u => u.Nickname)
+                .Map("timezone", u => u.Timezone)
+                .Map("profileUrl", propertyAccessor: u => u.ProfileUrl)
+                .Map("locale", u => u.Locale)
+                .Map("name.givenName", u => u.FirstName)
+                .Map("name.familyName", u => u.LastName)
+                .Map("name.formatted", u => u.Formatted)
+                .Map("name.middleName", propertyAccessor: u => u.MiddleName)
+                .Map("name.honorificPrefix", propertyAccessor: u => u.HonorificPrefix)
+                .Map("name.honorificSuffix", u => u.HonorificSuffix);
+        })
+        .MapPatchingOperations<AppUser>(ScimSchemas.EnterpriseUser, mapBuilder =>
+        {
+            mapBuilder
+                .Map($"department", u => u.Department)
+                .Map($"employeeNumber", u => u.EmployeeNumber)
+                .Map($"organization", u => u.Organization)
+                .Map($"division", u => u.Division)
+                .Map($"costCenter", u => u.CostCenter);
         });
 
 var app = builder.Build();

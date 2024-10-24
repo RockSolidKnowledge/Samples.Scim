@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Rsk.AspNetCore.Scim.Configuration.DependencyInjection;
 
 namespace SimpleApp.SCIM;
@@ -13,6 +14,7 @@ public static class ScimServiceProviderBuilderExtensions
 
         IScimPatchMap<TEntity> map = mapBuilder.Build();
 
+        builder.Services.TryAddSingleton<IScimPatcher<TEntity>, ScimPatcher<TEntity>>();
         builder.Services.AddSingleton(map);
 
         return builder;

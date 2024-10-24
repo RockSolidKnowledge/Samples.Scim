@@ -9,19 +9,22 @@ public interface IScimPatcher<in TEntity> where TEntity : class
 
 public class ScimPatcher<TEntity> : IScimPatcher<TEntity> where TEntity : class
 {
-    private readonly IScimPatchMap<TEntity> patchMap;
+    private readonly IEnumerable<IScimPatchMap<TEntity>> maps;
 
-    public ScimPatcher(IScimPatchMap<TEntity> patchMap)
+    public ScimPatcher(IEnumerable<IScimPatchMap<TEntity>> maps)
     {
-        this.patchMap = patchMap;
+        this.maps = maps;
     }
 
     public bool TryPatch(TEntity user, PatchCommand command)
     {
-        if (patchMap.TryGetPatchMethod(command.Path, out IScimPatchOperationExecutor<TEntity>? patchOp))
+        foreach (var map in maps)
         {
-            patchOp.Execute(user, command);
-            return true;
+            if (map.TryGetPatchExecutor(command.Path, out IScimPatchOperationExecutor<TEntity>? patchOp))
+            {
+                patchOp.Execute(user, command);
+                return true;
+            }
         }
 
         return false;

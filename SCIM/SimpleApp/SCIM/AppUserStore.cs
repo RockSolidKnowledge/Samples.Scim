@@ -14,14 +14,16 @@ public class AppUserStore : IScimStore<User>
 {
     private readonly AppDbContext ctx;
     private readonly IScimQueryBuilderFactory queryBuilderFactory;
+    private readonly IScimPatcher<AppUser> appUserPatcher;
 
     public AppUserStore(
         AppDbContext ctx,
-        IScimQueryBuilderFactory queryBuilderFactory
-        )
+        IScimQueryBuilderFactory queryBuilderFactory,
+        IScimPatcher<AppUser> appUserPatcher)
     {
         this.ctx = ctx;
         this.queryBuilderFactory = queryBuilderFactory;
+        this.appUserPatcher = appUserPatcher;
     }
 
     public async Task<IEnumerable<string>> Exists(IEnumerable<string> ids)
@@ -171,27 +173,6 @@ public class AppUserStore : IScimStore<User>
                 source.HonorificSuffix = name?.HonorificSuffix;
                 source.HonorificPrefix = name?.HonorificPrefix;
             },
-            [$"{ScimSchemas.User}:displayName"] = (source, value) => source.DisplayName = (string)value,
-            [$"{ScimSchemas.User}:title"] = (source, value) => source.Title = (string)value,
-            [$"{ScimSchemas.User}:preferredLanguage"] = (source, value) => source.PreferredLanguage = (string)value,
-            [$"{ScimSchemas.User}:userType"] = (source, value) => source.UserType = (string)value,
-            [$"{ScimSchemas.User}:userName"] = (source, value) => source.Username = (string)value,
-            [$"{ScimSchemas.User}:nickName"] = (source, value) => source.Nickname = (string)value,
-            [$"{ScimSchemas.User}:timezone"] = (source, value) => source.Timezone = (string)value,
-            [$"{ScimSchemas.User}:profileUrl"] = (source, value) => source.ProfileUrl = (string)value,
-            [$"{ScimSchemas.User}:name.givenName"] = (source, value) => source.FirstName = (string)value,
-            [$"{ScimSchemas.User}:name.familyName"] = (source, value) => source.LastName = (string)value,
-            [$"{ScimSchemas.User}:name.formatted"] = (source, value) => source.Formatted = (string)value,
-            [$"{ScimSchemas.User}:name.middleName"] = (source, value) => source.MiddleName = (string)value,
-            [$"{ScimSchemas.User}:name.honorificPrefix"] = (source, value) => source.HonorificPrefix = (string)value,
-            [$"{ScimSchemas.User}:name.honorificSuffix"] = (source, value) => source.HonorificSuffix = (string)value,
-            [$"{ScimSchemas.User}:active"] = (source, value) => source.IsDisabled = !(bool)value,
-            [$"{ScimSchemas.User}:locale"] = (source, value) => source.Locale = (string)value,
-            [$"{ScimSchemas.EnterpriseUser}:department"] = (source, value) => source.Department = (string)value,
-            [$"{ScimSchemas.EnterpriseUser}:employeeNumber"] = (source, value) => source.EmployeeNumber = (string)value,
-            [$"{ScimSchemas.EnterpriseUser}:organization"] = (source, value) => source.Organization = (string)value,
-            [$"{ScimSchemas.EnterpriseUser}:division"] = (source, value) => source.Division = (string)value,
-            [$"{ScimSchemas.EnterpriseUser}:costCenter"] = (source, value) => source.CostCenter = (string)value,
             [$"{ScimSchemas.User}:addresses[{ScimSchemas.User}:type eq \"work\"].{ScimSchemas.User}:formatted"] = (source, value) =>
             {
                 source.Address ??= new AppAddress();
@@ -298,6 +279,7 @@ public class AppUserStore : IScimStore<User>
 
         foreach (PatchCommand replaceCmd in commands.Where(u => u.Operation != PatchOperation.Remove))
         {
+            if (appUserPatcher.TryPatch(user, replaceCmd)) continue;
             if (patchingMethods.TryGetValue(replaceCmd.Path.ToString(), out Action<AppUser, object>? replaceAction))
             {
                 replaceAction(user, replaceCmd.Value);
