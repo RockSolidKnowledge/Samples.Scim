@@ -32,7 +32,6 @@ public class AppUser
     public string? ProfileUrl { get; set; }
     public string? Timezone { get; set; }
     public string? DisplayName { get; set; }
-
     public string? Formatted { get; set; }
     public string? HonorificSuffix { get; set; }
     public string? HonorificPrefix { get; set; }
@@ -43,9 +42,18 @@ public class AppUser
     public string? Division { get; set; }
     public string? CostCenter { get; set; }
     public string? UserType { get; set; }
-    public string? Email { get; set; }
-    public AppAddress? Address { get; set; }
+    public ICollection<AppAddress>? Addresses { get; set; }
     public ICollection<AppPhoneNumber>? Phones { get; set; }
+    public ICollection<AppEmail>? Emails { get; set; }
+    public AppManager? Manager { get; set; }
+}
+
+public class AppEmail
+{
+    public int Id { get; set; }
+    public string Value { get; set; }
+    public bool Primary { get; set; }
+    public string Type { get; set; }
 }
 
 public class AppAddress
@@ -57,6 +65,8 @@ public class AppAddress
     public string Locality { get;set; }
     public string StreetAddress { get;set; }
     public string Formatted { get;set; }
+    public bool Primary { get; set; }
+    public string Type { get; set; }
 }
 
 public class AppPhoneNumber
@@ -75,4 +85,11 @@ public class AppPhoneNumber
     public string Value { get; set; }
     public bool Primary { get; set; }
     public string Type { get; set; }
+}
+
+public class AppManager
+{
+    public int Id { get; set; }
+    public string Value { get; set; }
+    public string Display { get; set; }
 }

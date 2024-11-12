@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<AppRole> Roles { get; set; }
     public DbSet<AppPhoneNumber> Phones { get; set; }
     public DbSet<AppAddress> Addresses { get; set; }
+
     public DbSet<AppUserRole> UserRoles { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
@@ -85,7 +86,7 @@ public class AppDbContext : DbContext
             .IsRequired(false);
 
         modelBuilder.Entity<AppUser>()
-            .HasOne(u => u.Address);
+            .HasMany(u => u.Addresses);
 
         modelBuilder.Entity<AppUser>()
             .HasMany(u => u.Phones);
