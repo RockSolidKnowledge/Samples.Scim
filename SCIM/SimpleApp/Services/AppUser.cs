@@ -1,6 +1,3 @@
-using System.Drawing;
-using Rsk.AspNetCore.Scim.Models;
-
 namespace SimpleApp.Services;
 
 public class AppUser
@@ -46,50 +43,4 @@ public class AppUser
     public ICollection<AppPhoneNumber>? Phones { get; set; }
     public ICollection<AppEmail>? Emails { get; set; }
     public AppManager? Manager { get; set; }
-}
-
-public class AppEmail
-{
-    public int Id { get; set; }
-    public string Value { get; set; }
-    public bool Primary { get; set; }
-    public string Type { get; set; }
-}
-
-public class AppAddress
-{
-    public int Id { get; set; }
-    public string Country { get;set; }
-    public string PostalCode { get;set; }
-    public string Region { get;set; }
-    public string Locality { get;set; }
-    public string StreetAddress { get;set; }
-    public string Formatted { get;set; }
-    public bool Primary { get; set; }
-    public string Type { get; set; }
-}
-
-public class AppPhoneNumber
-{
-    public AppPhoneNumber(string type)
-    {
-        Type = type;
-    }
-
-    public AppPhoneNumber()
-    {
-
-    }
-
-    public int Id { get; set; }
-    public string Value { get; set; }
-    public bool Primary { get; set; }
-    public string Type { get; set; }
-}
-
-public class AppManager
-{
-    public int Id { get; set; }
-    public string Value { get; set; }
-    public string Display { get; set; }
 }

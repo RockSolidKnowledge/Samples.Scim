@@ -168,7 +168,7 @@ public class AppUserStore : IScimStore<User>
     {
         AppUser user = await FindUser(resourceId);
 
-        foreach (PatchCommand replaceCmd in commands.Where(u => u.Operation != PatchOperation.Remove))
+        foreach (PatchCommand replaceCmd in commands)
         {
             try
             {

@@ -39,27 +39,6 @@ var scimServiceProviderBuilder =
             mapper
                 .Map("id", u => u.Id)
                 .Map("userName", u => u.Username)
-                .Map("name.familyName", u => u.LastName)
-                .Map("name.givenName", u => u.FirstName)
-                .Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse)
-                .Map("locale", u => u.Locale);
-        })
-        .MapScimAttributes<AppRole>(ScimSchemas.Group, mapper =>
-        {
-            mapper
-                .Map("id", r => r.Id)
-                .Map("displayName", r => r.Name)
-                .MapCollection<Member>("members", r => r.Members, member =>
-                {
-                    member
-                        .Map("value", m => m.Value)
-                        .Map("display", m => m.Display)
-                        .Map("type", m => m.Type);
-                });
-        })
-        .MapPatchingOperations<AppUser>(ScimSchemas.User, mapBuilder =>
-        {
-            mapBuilder.Map("userName", u => u.Username)
                 .Map("active", u => u.IsDisabled, ScimFilterAttributeConverters.Inverse)
                 .Map("displayName", u => u.DisplayName)
                 .Map("title", u => u.Title)
@@ -100,15 +79,19 @@ var scimServiceProviderBuilder =
                         .Map("primary", e => e.Primary);
 
                 });
-            // .MapComplex<AppUser>("name", u => u.Formatted, nameBuilder =>
-            // {
-            //     nameBuilder.Map("givenName", u => u.FirstName)
-            //         .Map("familyName", u => u.LastName)
-            //         .Map("formatted", u => u.Formatted)
-            //         .Map("middleName", u => u.MiddleName)
-            //         .Map("honorificPrefix", u => u.HonorificPrefix)
-            //         .Map("honorificSuffix", u => u.HonorificSuffix);
-            // });
+        })
+        .MapScimAttributes<AppRole>(ScimSchemas.Group, mapper =>
+        {
+            mapper
+                .Map("id", r => r.Id)
+                .Map("displayName", r => r.Name)
+                .MapCollection<Member>("members", r => r.Members, member =>
+                {
+                    member
+                        .Map("value", m => m.Value)
+                        .Map("display", m => m.Display)
+                        .Map("type", m => m.Type);
+                });
         })
         .MapScimAttributes<AppRole>(ScimSchemas.Group, mapper =>
         {
