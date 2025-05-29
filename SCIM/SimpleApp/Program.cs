@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Rsk.AspNetCore.Scim.Configuration;
 using Rsk.AspNetCore.Scim.Constants;
 using Rsk.AspNetCore.Scim.Models;
+using SimpleApp;
 using SimpleApp.SCIM;
 using SimpleApp.Services;
 
@@ -31,7 +32,7 @@ var scimServiceProviderBuilder =
             })
         .AddResource<User, AppUserStore>(ScimSchemas.User, "users")
         .AddResourceExtension<User, EnterpriseUser>(ScimSchemas.EnterpriseUser)
-     //   .AddResourceExtension<User,Employment>("urn:ietf:params:scim:schemas:extension:employment:2.0:User")
+        .AddResourceExtension<User,Employment>("urn:ietf:params:scim:schemas:extension:employment:2.0:User")
         .AddResource<Group, AppRoleStore>(ScimSchemas.Group, "groups")
         .AddFilterPropertyExpressionCompiler()
         .MapScimAttributes<AppUser>(ScimSchemas.User, mapper =>
