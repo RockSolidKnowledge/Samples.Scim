@@ -237,7 +237,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": \"{{Group_Id}}\",\r\n  \"displayName\": \"Programmers - c#\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ]\r\n}",
+					"raw": "{\r\n  \"displayName\": \"Programmers - c#\",\r\n  \"schemas\": [\r\n    \"urn:ietf:params:scim:schemas:core:2.0:Group\"\r\n  ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -245,7 +245,7 @@
 					}
 				},
 				"url": {
-					"raw": "{{SCIM_Path_Local}}/groups/",
+					"raw": "{{SCIM_Path_Local}}/groups/{{Group_Id}}",
 					"host": [
 						"{{SCIM_Path_Local}}"
 					],
