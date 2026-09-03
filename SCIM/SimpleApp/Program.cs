@@ -24,7 +24,7 @@ var scimServiceProviderBuilder =
                 Licensee = "DEMO",
                 LicenseKey = "Get a license key form https://www.identityserver.com/products/scim-for-aspnet" } , new ScimServiceProviderConfigOptions()
             {
-                FilteringSupported = false,
+                FilteringSupported = true,
                 SortingSupported = true,
                 PatchSupported = true,
                 EnableAzureAdCompatibility = true,
@@ -117,8 +117,8 @@ var scimServiceProviderBuilder =
                 .Map($"costCenter", u => u.CostCenter)
                 .MapComplex("manager", u => u.Manager, managerBuilder =>
                 {
-                    managerBuilder.Map("value", m => m.Value)
-                        .Map("displayName", m => m.Display);
+                    managerBuilder.Map("value", m => m!.Value)
+                        .Map("displayName", m => m!.Display);
                 });
         });
 

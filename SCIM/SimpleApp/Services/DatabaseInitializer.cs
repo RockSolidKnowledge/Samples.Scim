@@ -4,6 +4,7 @@ public static class DatabaseInitializer
 {
     public static void Initialize(AppDbContext context)
     {
+        context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
         if (context.Users.Any())

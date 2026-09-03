@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
@@ -10,8 +10,7 @@
         <PackageReference Include="Faker.Data" Version="2.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10"/>
-        <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
-        <PackageReference Include="Rsk.AspNetCore.Scim" Version="8.0.1" />
+        <PackageReference Include="Rsk.AspNetCore.Scim" Version="9.3.1" />
     </ItemGroup>
 
     <ItemGroup>
